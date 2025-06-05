@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KanbanBoardApp.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,7 @@ namespace KanbanBoardApp.View
         public CardDialog()
         {
             InitializeComponent();
+            DataContext = new CardViewModel();
         }
 
         private void btnClose_window(object sender, RoutedEventArgs e)

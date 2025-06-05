@@ -43,7 +43,7 @@
                 <TextBlock Text="Owner: " Margin="0,0,5,0"/>
                 <CC:PlaceHolderTextBox Width="200" PlaceHolder="Enter Card Owner" CaretBrush="White" CornerRadius="5" BorderThickness="1"/>
             </StackPanel>
-            <ComboBox Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Width="120" Margin="5"/>
+            <ComboBox Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Width="120" Margin="5" ItemsSource="{Binding UrgencyCollection}"/>
             <DatePicker Grid.Row="2" Grid.Column="1" Margin="5" SelectedDate="2025-01-01"/>
         </Grid>
 
