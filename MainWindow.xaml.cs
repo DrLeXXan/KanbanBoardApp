@@ -9,16 +9,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using KanbanBoardApp.View;
+
 namespace KanbanBoardApp
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void btnAdd_Card(object sender, RoutedEventArgs e)
+        {
+            CardDialog cardDialog = new CardDialog();
+            cardDialog.ShowDialog();
         }
     }
 }
