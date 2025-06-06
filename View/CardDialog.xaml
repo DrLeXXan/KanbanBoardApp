@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KanbanBoardApp.View"
         xmlns:CC="clr-namespace:KanbanBoardApp.CustomControls"
+        xmlns:models="clr-namespace:KanbanBoardApp.Models"
         mc:Ignorable="d"
-        Title="Kanban Card" Height="500" Width="320">
+        Title="Kanban Card" Height="530" Width="350">
      <Window.Resources>
 
     </Window.Resources>
@@ -37,19 +38,26 @@
 
             <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" HorizontalAlignment="Right">
                 <TextBlock Text="Card Title: " Margin="0,0,5,0"/>
-                <CC:PlaceHolderTextBox Width="225" PlaceHolder="Enter Card Title" CaretBrush="White" CornerRadius="5" BorderThickness="1"/>
+                <CC:PlaceHolderTextBox Width="225" PlaceHolder="Enter Card Title" CaretBrush="White" CornerRadius="5" BorderThickness="1"
+                       Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5" HorizontalAlignment="Right">
                 <TextBlock Text="Owner: " Margin="0,0,5,0"/>
-                <CC:PlaceHolderTextBox Width="225" PlaceHolder="Enter Card Owner" CaretBrush="White" CornerRadius="5" BorderThickness="1"/>
+                <CC:PlaceHolderTextBox Width="225" PlaceHolder="Enter Card Owner" CaretBrush="White" CornerRadius="5" BorderThickness="1"
+                       Text="{Binding Owner, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
-            <ComboBox Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Width="120" Margin="5" ItemsSource="{Binding UrgencyCollection}"/>
+            <ComboBox Grid.Row="2" Grid.Column="0" 
+                      VerticalAlignment="Center" HorizontalAlignment="Center" 
+                      Width="120" Margin="5" 
+                      ItemsSource="{x:Static models:KanbanCard.UrgencyCollection}"
+                      SelectedItem="{Binding Urgency, UpdateSourceTrigger=PropertyChanged}"/>
             <DatePicker Grid.Row="2" Grid.Column="1" Margin="5" SelectedDate="2025-01-01"/>
         </Grid>
 
         <StackPanel Margin="10,5,10,5">
             <TextBlock Text="Description"></TextBlock>
-            <CC:PlaceHolderTextBox TextWrapping="Wrap" AcceptsReturn="True" Height="100" CornerRadius="5" BorderThickness="1" PlaceHolder=""/>
+            <CC:PlaceHolderTextBox TextWrapping="Wrap" AcceptsReturn="True" Height="100" CornerRadius="5" BorderThickness="1"
+                       PlaceHolder="" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
 
         <TextBlock Margin="10,0,10,0">Comments</TextBlock>
@@ -69,8 +77,15 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Content="Save" Margin="5,5,10,5" Background="LightGreen" BorderBrush="LightGreen"/>
+            <!-- Button Save -->
+            <Button Grid.Column="0" 
+                    Content="Save" 
+                    Margin="5,5,10,5" 
+                    Background="LightGreen" BorderBrush="LightGreen" 
+                    Click="btnSave_Click"/>
+            <!-- Button Delete -->
             <Button Grid.Column="1" Content="Delete" Margin="5,5,10,5" Background="IndianRed" BorderBrush="IndianRed"/>
+            <!-- Button Exit -->
             <Button Grid.Column="2" Content="Exit" Margin="5,5,10,5" Click="btnClose_window" Cursor="Hand"/>
         </Grid>
     </StackPanel>

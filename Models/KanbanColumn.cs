@@ -43,6 +43,6 @@ namespace KanbanBoardApp.Models
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    //public ObservableCollection<KanbanCard> Cards { get; set; } = new();
+        public ObservableCollection<KanbanCard> Cards { get; set; } = new();
     }
 }
