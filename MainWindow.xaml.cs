@@ -1,4 +1,5 @@
-﻿using KanbanBoardApp.View;
+﻿using KanbanBoardApp.Models;
+using KanbanBoardApp.View;
 using KanbanBoardApp.ViewModels;
 using System.Text;
 using System.Windows;
@@ -19,6 +20,15 @@ namespace KanbanBoardApp
         {
             InitializeComponent();
             DataContext = new MainViewModel();
+
+            if (DataContext is MainViewModel vm)
+            {
+                vm.DeleteColumnCommand = new RelayCommand(param =>
+                {
+                    if (param is KanbanColumn column)
+                        DeleteColumnWithConfirmation(column);
+                });
+            }
         }
 
         private void btnAdd_Card(object sender, RoutedEventArgs e)
@@ -70,5 +80,24 @@ namespace KanbanBoardApp
                     col.IsEditing = false;
             }
         }
+
+        public void DeleteColumnWithConfirmation(KanbanColumn column)
+        {
+            var result = MessageBox.Show(
+                $"Are you sure you want to delete the column \"{column.Title}\"? This action cannot be undone!",
+                "Confirm Delete",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                if (DataContext is MainViewModel vm && vm.Columns.Contains(column))
+                {
+                    vm.Columns.Remove(column);
+                }
+            }
+        }
+
+
     }
 }

@@ -15,6 +15,7 @@ namespace KanbanBoardApp.ViewModels
     {
         public ObservableCollection<KanbanColumn> Columns { get; set; }
         public ICommand AddColumnsCommand { get; }
+        public ICommand DeleteColumnCommand { get; set; }
 
         public MainViewModel()
         {
@@ -28,6 +29,7 @@ namespace KanbanBoardApp.ViewModels
             };
 
             AddColumnsCommand = new RelayCommand(AddColumnHandler);
+            DeleteColumnCommand = new RelayCommand(DeleteColumnHandler);
         }
 
         private void AddColumnHandler(object? parameter)
@@ -46,10 +48,10 @@ namespace KanbanBoardApp.ViewModels
             Columns.Add(new KanbanColumn { Title = "New Column" });
         }
 
-        //public void AddColumn(string title)
-        //{
-        //    Columns.Add(new KanbanColumn { Title = title });
-        //}
+        private void DeleteColumnHandler(object? parameter)
+        {
+            // This will be handled in the code-behind for confirmation
+        }
 
         // Implement INotifyPropertyChanged...
     }   

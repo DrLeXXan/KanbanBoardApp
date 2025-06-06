@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:KanbanBoardApp.View"
         xmlns:helpers="clr-namespace:KanbanBoardApp.Helpers"
         mc:Ignorable="d"
+        Background="#f5f4f2"
         Title="KanbanBoard" Height="600" Width="1130"
         PreviewMouseDown="Window_PreviewMouseDown">
     <!-- Leave the column header edit from when clicking anywhere in the window-->
@@ -17,6 +18,8 @@
         <helpers:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
     </Window.Resources>
 
+    
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
@@ -24,14 +27,20 @@
         </Grid.RowDefinitions>
 
         <!-- Header / Toolbar -->
-        <DockPanel Grid.Row="0" Margin="20,10,0,20">
-            <TextBlock Text="KANBAN Board" FontFamily="Georgia" FontSize="40" FontWeight="Bold" VerticalAlignment="Center" Margin="25,0,0,0"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,0">
-                <Button Content="Save Board" Width="100" Height="40" Margin="20,5,5,5" />
-                <Button Content="Add Column" Width="100" Height="40" Margin="10,5,20,5" Command="{Binding AddColumnsCommand}" Cursor="Hand"/>
-                <Button Content="New Card" Width="100" Height="40" Margin="0,5,20,5" Click="btnAdd_Card" Cursor="Hand"/>
-            </StackPanel>
-        </DockPanel>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="20"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="KANBAN Board" FontFamily="Georgia" FontSize="40" FontWeight="Bold" VerticalAlignment="Center" Margin="25,0,0,0"/>
+            <Button Grid.Column="1" Content="Save Board" Margin="15"/>
+            <Button Grid.Column="2" Content="Add Column" Margin="15" Command="{Binding AddColumnsCommand}" Cursor="Hand"/>
+            <Button Grid.Column="3" Content="New Card" Margin="15" Click="btnAdd_Card" Cursor="Hand"/>
+        </Grid>
 
 
         <!-- Content / Kanban Board-->
@@ -39,43 +48,77 @@
             <ItemsControl x:Name="Columns" ItemsSource="{Binding Columns}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Margin="10" BorderBrush="#4795fc" BorderThickness="4" CornerRadius="10" Width="250">
-                            <!-- Column Header -->
-                            <StackPanel HorizontalAlignment="Stretch">
-                                <Border CornerRadius="7,7,0,0" Background="#4795fc">
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,17">
-                                        <TextBlock Text="(1)" FontWeight="Bold" FontSize="18" Margin="15,5,0,0"/>
-                                        <Grid>
-                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="18" Margin="5,5,0,0"
+                        <!-- Start Column -->
+                        <Border Margin="10" BorderBrush="#4795fc" BorderThickness="4" CornerRadius="10" Width="250" Background="White">
+                            <StackPanel>
+                                <!-- Column Header -->
+                                <Border CornerRadius="7,7,0,0" Background="#4795fc" Height="40">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Card Counter -->
+                                        <TextBlock Grid.Column="0" Text="(0)" FontWeight="Bold" FontSize="18" VerticalAlignment="Center" Margin="5"/>
+
+                                        <!-- Column Name -->
+                                        <Grid Grid.Column="1" VerticalAlignment="Center" Margin="5">
+
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="18"
                                                        Visibility="{Binding IsEditing, Converter={StaticResource InverseBoolToVisibilityConverter}}"
                                                        MouseDown="ColumnTitle_MouseDown"/>
-                                            <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" FontWeight="Bold" FontSize="18" Margin="5,5,0,0"
+                                            <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" 
+                                                     FontWeight="Bold" FontSize="18"
                                                      Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                     
                                                      KeyDown="ColumnTitleTextBox_KeyDown"/>
                                         </Grid>
-                                        <Button Content="+" 
-                                                Background="Transparent" 
-                                                BorderBrush="Transparent" 
-                                                FontWeight="Bold" 
-                                                FontSize="20" 
-                                                HorizontalAlignment="Right" 
-                                                Cursor="Hand" 
+
+                                        <!-- Button Delete -->
+                                        <Button Grid.Column="2"
+                                                Background="Transparent"
+                                                BorderBrush="Transparent"
+                                                Cursor="Hand"
+                                                Command="{Binding DataContext.DeleteColumnCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}">
+                                            <Image Source="Icons/trash.ico" Width="16" Height="16"/>
+                                        </Button>
+
+                                        <!-- Button Add -->
+                                        <Button Grid.Column="3"
+                                                Background="Transparent"
+                                                BorderBrush="Transparent"
+                                                Cursor="Hand"
                                                 Command="{Binding DataContext.AddColumnsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                CommandParameter="{Binding}" />
-                                    </StackPanel>
+                                                CommandParameter="{Binding}">
+                                            <Image Source="Icons/add.ico" Width="16" Height="16"/>
+                                        </Button>
+
+                                        <!-- Button Move -->
+                                        <Image Grid.Column="4" Source="Icons/menu.ico" Width="20" Height="20" Margin="5"/>
+
+                                    </Grid>
                                 </Border>
-                
+
                                 <!-- Contect / Card Section -->
-                                <ItemsControl ItemsSource="{Binding Cards}">
+                                <ItemsControl x:Name="Cards" ItemsSource="{Binding Cards}">
                                     <!-- Items will be added here dynamically -->
                                 </ItemsControl>
+
+                                <Button Content="Add Card"
+                                        Margin="10,5,10,10"
+                                        HorizontalAlignment="Stretch"
+                                        Command="{Binding DataContext.AddCardCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}" />
+
                             </StackPanel>
                         </Border>
                     </DataTemplate>
