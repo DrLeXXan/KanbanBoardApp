@@ -110,26 +110,12 @@
 
                                 <!-- Contect / Card Section -->
                                 <ItemsControl x:Name="Cards" ItemsSource="{Binding Cards}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Margin="5" Padding="5" Background="#f0f0f0" CornerRadius="5">
-                                                <StackPanel>
-                                                    <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
-                                                    <TextBlock Text="{Binding Owner}" FontStyle="Italic"/>
-                                                    <TextBlock Text="{Binding Description}" TextWrapping="Wrap"/>
-                                                </StackPanel>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
+                                    <!-- Items will be added here dynamically -->
                                 </ItemsControl>
 
-                                <!-- Add Card in column button -->
-                                <Button Content="+ Add Card"
-                                        Margin="10"
-                                        FontFamily="Arial"
-                                        Width="80"
-                                        Height="30"
-                                        Cursor="Hand"
+                                <Button Content="Add Card"
+                                        Margin="10,5,10,10"
+                                        HorizontalAlignment="Stretch"
                                         Command="{Binding DataContext.AddCardCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}" />
 

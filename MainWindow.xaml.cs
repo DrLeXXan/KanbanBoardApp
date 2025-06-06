@@ -33,16 +33,8 @@ namespace KanbanBoardApp
 
         private void btnAdd_Card(object sender, RoutedEventArgs e)
         {
-            // Assume you have a way to get the selected column, e.g., the first column for demo
-            var vm = DataContext as MainViewModel;
-            var column = vm?.Columns.FirstOrDefault();
-            if (column == null) return;
-
-            var dialog = new CardDialog();
-            if (dialog.ShowDialog() == true)
-            {
-                column.Cards.Add(dialog.GetCard());
-            }
+            CardDialog cardDialog = new CardDialog();
+            cardDialog.ShowDialog();
         }
 
         private void ColumnTitle_MouseDown(object sender, MouseButtonEventArgs e)
