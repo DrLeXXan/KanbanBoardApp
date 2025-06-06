@@ -18,6 +18,7 @@ namespace KanbanBoardApp
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainViewModel();
         }
 
         private void btnAdd_Card(object sender, RoutedEventArgs e)
