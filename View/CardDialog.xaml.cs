@@ -1,4 +1,5 @@
-﻿using KanbanBoardApp.ViewModels;
+﻿using KanbanBoardApp.Models;
+using KanbanBoardApp.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,21 +16,29 @@ using System.Windows.Shapes;
 
 namespace KanbanBoardApp.View
 {
-    /// <summary>
-    /// Interaction logic for CardDialog.xaml
-    /// </summary>
-    /// fff
     public partial class CardDialog : Window
     {
-        public CardDialog()
+        public CardDialogViewModel ViewModel { get; }
+
+        public CardDialog(KanbanCard? card = null)
         {
             InitializeComponent();
-            DataContext = new CardViewModel();
+            ViewModel = new CardDialogViewModel(card);
+            DataContext = ViewModel;
         }
 
-        private void btnClose_window(object sender, RoutedEventArgs e)
+        public KanbanCard GetCard() => ViewModel.Card;
+
+            private void btnClose_window(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            DialogResult = false;
+            Close();
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
         }
     }
 }

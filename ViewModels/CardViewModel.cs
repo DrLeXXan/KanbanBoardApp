@@ -1,24 +1,17 @@
-﻿using System;
+﻿using KanbanBoardApp.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KanbanBoardApp.ViewModels
 {
-    public class CardViewModel
+    public class CardDialogViewModel
     {
-        public List<string> UrgencyCollection { get; set; }   
-        
-        public CardViewModel()
+        public KanbanCard Card { get; }
+        public List<string> UrgencyCollection { get; }
+
+        public CardDialogViewModel(KanbanCard? card = null)
         {
-            UrgencyCollection = new List<string>()
-            {
-                "Low",
-                "Medium",
-                "High",
-                "Urgent"
-            };
+            Card = card ?? new KanbanCard();
+            UrgencyCollection = new List<string> { "Low", "Medium", "High", "Urgent" };
         }
     }
 }

@@ -12,6 +12,8 @@ namespace KanbanBoardApp.Models
     {
         private string _title = string.Empty;
         private bool _isEditing;
+        public ObservableCollection<KanbanCard> Cards { get; set; } = new();
+        public int CardCount => Cards?.Count ?? 0;
 
         public string Title
         {
@@ -39,10 +41,14 @@ namespace KanbanBoardApp.Models
             }
         }
 
+        public KanbanColumn()
+        {
+            Cards.CollectionChanged += (s, e) => OnPropertyChanged(nameof(CardCount));
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-    //public ObservableCollection<KanbanCard> Cards { get; set; } = new();
+        
     }
 }
