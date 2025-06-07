@@ -138,10 +138,35 @@
                                                     <Border Margin="5" Padding="5" Background="#f0f0f0" CornerRadius="5" MouseLeftButtonDown="Open_Card_In_Dialog" Cursor="Hand">
                                                         <StackPanel>
                                                             <!-- Name of the card including urgency flag -->
-                                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                                <Ellipse Width="15" Height="15"  Fill="{Binding Urgency, Converter={StaticResource UrgencyToBrushConverter}}" Margin="5" VerticalAlignment="Center"/>
-                                                                <TextBlock Text="{Binding Title}" FontWeight="Bold" VerticalAlignment="Center" FontSize="15"/>
-                                                            </StackPanel>
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <!-- Urgency Flag -->
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <!-- Card Title -->
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <!-- Crad ID -->
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <Ellipse Grid.Column="0" 
+                                                                         Width="15" Height="15" Margin="5"  
+                                                                         Fill="{Binding Urgency, Converter={StaticResource UrgencyToBrushConverter}}" 
+                                                                         VerticalAlignment="Center"/>
+                                                                <TextBlock Grid.Column="1" 
+                                                                           Text="{Binding Title}" 
+                                                                           FontWeight="Bold" FontSize="15" Margin="5"
+                                                                           VerticalAlignment="Center"/>
+                                                                <TextBlock Grid.Column="2" 
+                                                                           Margin="5"
+                                                                           VerticalAlignment="Center">
+                                                                    <TextBlock.Text>
+                                                                        <MultiBinding StringFormat="ID: {0}">
+                                                                            <Binding Path="Id"/>
+                                                                        </MultiBinding>
+                                                                    </TextBlock.Text>
+                                                                </TextBlock>
+                                                            </Grid>
+                         
                                                             <!-- Card Owner -->
                                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                                 <TextBlock Text="Owner: "/>

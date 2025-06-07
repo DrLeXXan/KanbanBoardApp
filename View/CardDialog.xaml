@@ -7,17 +7,36 @@
         xmlns:CC="clr-namespace:KanbanBoardApp.CustomControls"
         mc:Ignorable="d"
         Title="Kanban Card" Height="520" Width="350">
+     
      <Window.Resources>
-
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Window.Resources>
 
 
     <StackPanel Orientation="Vertical">
         <!-- Card Header-->
-        <StackPanel Orientation="Horizontal" Margin="10,10,0,20">
-            <TextBlock Text="KANBAN Card" FontFamily="Georgia" FontSize="28" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,20,0"/>
-            <TextBlock Text="ID:" FontSize="16" VerticalAlignment="Bottom"/>
-        </StackPanel>
+        <Grid Margin="10,0,10,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" 
+                       Text="KANBAN Card" 
+                       FontFamily="Georgia" FontSize="28" FontWeight="Bold" 
+                       VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1" 
+                       FontSize="16" 
+                       VerticalAlignment="Bottom">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="ID: {0}">
+                        <Binding Path="Card.Id"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+        </Grid>
+        
 
         <!-- Card Content -->
         <Grid Margin="10,5,10,5">
@@ -94,24 +113,31 @@
             </TextBlock>
         </ScrollViewer>
 
-        <Grid Height="45" Margin="10,5,5,5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-                
+        <!-- Row with buttons-->
+        <StackPanel Orientation="Horizontal" Height="45" Margin="10,5,5,5" HorizontalAlignment="Center">
             <!--  Button Save -->
-            <Button Grid.Column="0" 
-                    Content="Save" 
+            <Button Width="80"
+                    Content="Save"
+                    Cursor="Hand"
                     Margin="5,5,10,5" 
                     Background="LightGreen" BorderBrush="LightGreen" 
-                    Click="btnSave_Click"/>
+                    Click="btnSave_Card"/>
             <!--  Button Delete -->
-            <Button Grid.Column="1" Content="Delete" Margin="5,5,10,5" Background="IndianRed" BorderBrush="IndianRed"/>
+            <Button Width="80"
+                    Content="Delete" 
+                    Cursor="Hand"
+                    Margin="5,5,10,5" 
+                    Background="IndianRed" BorderBrush="IndianRed"
+                    Click="btnDelete_Card"
+                    Visibility="{Binding IsExistingCard, Converter={StaticResource BoolToVisibilityConverter}}"/>
+            
             <!--  Button Exit -->
-            <Button Grid.Column="2" Content="Exit" Margin="5,5,10,5" Click="btnClose_window" Cursor="Hand"/>
-        </Grid>
+            <Button Width="80"
+                    Content="Exit" 
+                    Margin="5,5,10,5" 
+                    Click="btnClose_window" 
+                    Cursor="Hand"/>
+        </StackPanel>
     </StackPanel>
 
 </Window>

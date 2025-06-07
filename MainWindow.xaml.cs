@@ -33,7 +33,6 @@ namespace KanbanBoardApp
 
         private void btnAdd_Card(object sender, RoutedEventArgs e)
         {
-            // Assume you have a way to get the selected column, e.g., the first column for demo
             var vm = DataContext as MainViewModel;
             var column = vm?.Columns.FirstOrDefault();
             if (column == null) return;
@@ -41,7 +40,12 @@ namespace KanbanBoardApp
             var dialog = new CardDialog();
             if (dialog.ShowDialog() == true)
             {
-                column.Cards.Add(dialog.GetCard());
+                var card = dialog.GetCard();
+                if (card.Id == 0) // Only assign if it's a new card
+                {
+                    card.Id = KanbanCard.GetNextId();
+                }
+                column.Cards.Add(card);
             }
         }
 
@@ -91,17 +95,25 @@ namespace KanbanBoardApp
         
         public void DeleteColumnWithConfirmation(KanbanColumn column)
         {
-            var result = MessageBox.Show(
+            if (column.Cards.Count > 0)
+            {
+                MessageBox.Show("You can only delete a column that has no cards.", "Delete Not Allowed", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            else
+            {
+                var result = MessageBox.Show(
                 $"Are you sure you want to delete the column \"{column.Title}\"? This action cannot be undone!",
                 "Confirm Delete",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
 
-            if (result == MessageBoxResult.Yes)
-            {
-                if (DataContext is MainViewModel vm && vm.Columns.Contains(column))
+                if (result == MessageBoxResult.Yes)
                 {
-                    vm.Columns.Remove(column);
+                    if (DataContext is MainViewModel vm && vm.Columns.Contains(column))
+                    {
+                        vm.Columns.Remove(column);
+                    }
                 }
             }
         }
@@ -121,8 +133,10 @@ namespace KanbanBoardApp
                 var dialog = new KanbanBoardApp.View.CardDialog(card);
                 if (dialog.ShowDialog() == true)
                 {
-                    // The card is already bound and updated via data binding
-                    // Optionally, force UI refresh if needed
+                    if (dialog.IsDeleteRequested)
+                    {
+                        column.Cards.Remove(card);
+                    }
                 }
             }
         }

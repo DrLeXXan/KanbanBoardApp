@@ -2,6 +2,7 @@
 using KanbanBoardApp.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,12 +14,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.XPath;
 
 namespace KanbanBoardApp.View
 {
     public partial class CardDialog : Window
     {
         public CardDialogViewModel ViewModel { get; }
+        public bool IsDeleteRequested { get; private set; }
 
         public CardDialog(KanbanCard? card = null)
         {
@@ -32,13 +35,40 @@ namespace KanbanBoardApp.View
             private void btnClose_window(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
-            Close();
+            Close(); 
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
+        private void btnSave_Card(object sender, RoutedEventArgs e)
         {
-            DialogResult = true;
-            Close();
+            if (string.IsNullOrWhiteSpace(ViewModel.Card.Title))
+            {
+                MessageBox.Show("Card Title cannot be empty.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            else
+            {
+                DialogResult = true;
+                Close();
+            }
+                
         }
+
+        private void btnDelete_Card(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show(
+                $"Are you sure you want to delete the card: {ViewModel.Card.Title}? This action cannot be undone!", 
+                "Confirm Delete", 
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+            if (result == MessageBoxResult.Yes)
+            {
+                IsDeleteRequested = true;
+                DialogResult = true;
+                Close();
+
+            }
+        }
+
+
     }
 }

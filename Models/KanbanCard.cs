@@ -5,11 +5,21 @@ namespace KanbanBoardApp.Models
 {
     public class KanbanCard : INotifyPropertyChanged
     {
+        private static int _nextId = 1;
+        private int _id;
         private string _title = string.Empty;
         private string _owner = string.Empty;
         private string _description = string.Empty;
         private string _urgency = string.Empty;
         private DateTime? _dueDate;
+
+        public int Id
+        {
+            get => _id;
+            set { _id = value; OnPropertyChanged(nameof(Id)); }
+        }
+
+        public static int GetNextId() => _nextId++;
 
         public string Title
         {
