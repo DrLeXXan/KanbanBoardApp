@@ -10,7 +10,7 @@ namespace KanbanBoardApp.ViewModels
 
         public CardDialogViewModel(KanbanCard? card = null)
         {
-            Card = card ?? new KanbanCard();
+            Card = card ?? new KanbanCard { Urgency = "Medium" };
             UrgencyCollection = new List<string> { "Low", "Medium", "High", "Urgent" };
         }
     }

@@ -17,6 +17,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <helpers:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
         <helpers:UrgencyToBrushConverter x:Key="UrgencyToBrushConverter"/>
+        <helpers:DateToBrushConverter x:Key="DateToBrushConverter" />
     </Window.Resources>
 
 
@@ -134,7 +135,7 @@
                                             <ItemsControl.ItemTemplate>
                                                 <!-- Card Template -->
                                                 <DataTemplate>
-                                                    <Border Margin="5" Padding="5" Background="#f0f0f0" CornerRadius="5">
+                                                    <Border Margin="5" Padding="5" Background="#f0f0f0" CornerRadius="5" MouseLeftButtonDown="Open_Card_In_Dialog" Cursor="Hand">
                                                         <StackPanel>
                                                             <!-- Name of the card including urgency flag -->
                                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -149,7 +150,10 @@
                                                             <!-- Card Due Date -->
                                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                                 <TextBlock Text="Due Date: "/>
-                                                                <TextBlock Text="{Binding DueDate}" FontWeight="SemiBold"/>
+                                                                <!-- Only show date without time -->
+                                                                <TextBlock Text="{Binding DueDate, StringFormat='{}{0:d}'}"
+                                                                           Foreground="{Binding DueDate, Converter={StaticResource DateToBrushConverter}}"
+                                                                           FontWeight="SemiBold"/>
                                                             </StackPanel>
 
                                                         </StackPanel>
@@ -164,7 +168,7 @@
                                                 FontWeight="SemiBold"
                                                 HorizontalAlignment="Stretch"
                                                 Command="{Binding DataContext.AddCardCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                CommandParameter="{Binding}"  />
+                                                CommandParameter="{Binding}"/>
                                     </StackPanel>
                                 </ScrollViewer>
                             </Grid>

@@ -88,7 +88,7 @@ namespace KanbanBoardApp
                     col.IsEditing = false;
             }
         }
-
+        
         public void DeleteColumnWithConfirmation(KanbanColumn column)
         {
             var result = MessageBox.Show(
@@ -106,7 +106,28 @@ namespace KanbanBoardApp
             }
         }
 
-        
+        private void Open_Card_In_Dialog(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2 && sender is Border border && border.DataContext is KanbanBoardApp.Models.KanbanCard card)
+            {
+                // Find the parent column
+                var column = (from col in ((KanbanBoardApp.ViewModels.MainViewModel)DataContext).Columns
+                              where col.Cards.Contains(card)
+                              select col).FirstOrDefault();
+
+                if (column == null) return;
+
+                // Open dialog with the existing card
+                var dialog = new KanbanBoardApp.View.CardDialog(card);
+                if (dialog.ShowDialog() == true)
+                {
+                    // The card is already bound and updated via data binding
+                    // Optionally, force UI refresh if needed
+                }
+            }
+        }
+
+
 
 
     }
