@@ -63,11 +63,14 @@ namespace KanbanBoardApp.ViewModels
                 if (dialog.ShowDialog() == true)
                 {
                     var card = dialog.GetCard();
+                    if (card != null && card.Id == 0)
+                        card.Id = KanbanCard.GetNextId();
                     if (card != null)
                         column.Cards.Add(card);
                 }
             }
         }
+
 
         // Implement INotifyPropertyChanged...
     }   

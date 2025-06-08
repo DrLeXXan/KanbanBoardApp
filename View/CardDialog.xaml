@@ -30,7 +30,7 @@
                        VerticalAlignment="Bottom">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="ID: {0}">
-                        <Binding Path="Card.Id"/>
+                        <Binding Path="NextId"/>
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>

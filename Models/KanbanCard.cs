@@ -19,6 +19,7 @@ namespace KanbanBoardApp.Models
             set { _id = value; OnPropertyChanged(nameof(Id)); }
         }
 
+        public static int PeekNextId() => _nextId ;
         public static int GetNextId() => _nextId++;
 
         public string Title

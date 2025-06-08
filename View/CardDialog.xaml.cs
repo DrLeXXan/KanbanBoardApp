@@ -47,6 +47,10 @@ namespace KanbanBoardApp.View
             }
             else
             {
+                if (ViewModel.IsExistingCard == false)
+                {
+                    KanbanCard.GetNextId();
+                }
                 DialogResult = true;
                 Close();
             }

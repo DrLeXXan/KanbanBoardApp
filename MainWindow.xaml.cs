@@ -41,10 +41,6 @@ namespace KanbanBoardApp
             if (dialog.ShowDialog() == true)
             {
                 var card = dialog.GetCard();
-                if (card.Id == 0) // Only assign if it's a new card
-                {
-                    card.Id = KanbanCard.GetNextId();
-                }
                 column.Cards.Add(card);
             }
         }
