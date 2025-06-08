@@ -56,7 +56,12 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <!-- Start Column -->
-                        <Border Margin="10" BorderBrush="#4795fc" BorderThickness="4" CornerRadius="10" Width="250" Background="White">
+                        <Border Margin="10" CornerRadius="10" Width="250"
+                                BorderBrush="#4795fc" Background="White"
+                                BorderThickness="4"
+                                AllowDrop="True"
+                                DragOver="Cards_DragOver"
+                                Drop="Cards_Drop">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -135,7 +140,10 @@
                                             <ItemsControl.ItemTemplate>
                                                 <!-- Card Template -->
                                                 <DataTemplate>
-                                                    <Border Margin="5" Padding="5" Background="#f0f0f0" CornerRadius="5" MouseLeftButtonDown="Open_Card_In_Dialog" Cursor="Hand">
+                                                    <Border Margin="5" Padding="5" Background="#f0f0f0" CornerRadius="5" 
+                                                            Cursor="Hand"
+                                                            MouseLeftButtonDown="Card_MouseLeftButtonDown"
+                                                            MouseMove="Card_MouseMove">
                                                         <StackPanel>
                                                             <!-- Name of the card including urgency flag -->
                                                             <Grid>

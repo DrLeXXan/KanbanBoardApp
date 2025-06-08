@@ -145,8 +145,75 @@ namespace KanbanBoardApp
             }
         }
 
+        private Point _dragStartPoint;
+        private KanbanCard? _draggedCard;
+        private KanbanColumn? _sourceColumn;
 
+        private void Card_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _dragStartPoint = e.GetPosition(null);
 
+            if (e.ClickCount == 2)
+            {
+                Open_Card_In_Dialog(sender, e);
+            }
+        }
 
+        // This Function is firering even if the mouse it not clicked!!! Causing issues!!!!!!
+        private void Card_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                var pos = e.GetPosition(null);
+                if (Math.Abs(pos.X - _dragStartPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                    Math.Abs(pos.Y - _dragStartPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+                    if (sender is Border border && border.DataContext is KanbanBoardApp.Models.KanbanCard card)
+                    {
+                        DragDrop.DoDragDrop(border, card, DragDropEffects.Move);
+                    }
+                }
+            }
+        }
+
+        private void Cards_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(KanbanBoardApp.Models.KanbanCard)))
+                e.Effects = DragDropEffects.Move;
+            else
+                e.Effects = DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        private void Cards_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(KanbanBoardApp.Models.KanbanCard)))
+            {
+                var card = e.Data.GetData(typeof(KanbanBoardApp.Models.KanbanCard)) as KanbanBoardApp.Models.KanbanCard;
+                if (card == null) return;
+
+                // The sender is now the Border (the column)
+                var border = sender as Border;
+                var targetColumn = border?.DataContext as KanbanBoardApp.Models.KanbanColumn;
+                if (targetColumn == null) return;
+
+                var vm = DataContext as KanbanBoardApp.ViewModels.MainViewModel;
+                var sourceColumn = vm?.Columns.FirstOrDefault(col => col.Cards.Contains(card));
+                if (sourceColumn == null)
+                {
+                    MessageBox.Show("Source column not found!");
+                    return;
+                }
+
+                if (sourceColumn != targetColumn)
+                {
+                    sourceColumn.Cards.Remove(card);
+                    targetColumn.Cards.Add(card);
+                }
+            }
+        }
     }
+
+
+
 }
