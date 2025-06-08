@@ -103,7 +103,7 @@
         
         <!-- Card Description -->
         <StackPanel Margin="10,5,10,5">
-            <TextBlock Text="Description"></TextBlock>
+            <TextBlock Text="Description" Margin="5,0,0,5"/>
             <CC:PlaceHolderTextBox TextWrapping="Wrap" 
                                    AcceptsReturn="True" 
                                    VerticalContentAlignment="Top"
