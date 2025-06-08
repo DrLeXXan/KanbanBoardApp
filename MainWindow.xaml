@@ -41,7 +41,7 @@
             <TextBlock Grid.Column="0" Text="KANBAN Board" FontFamily="Georgia" FontSize="40" FontWeight="Bold" VerticalAlignment="Center" Margin="25,0,0,0"/>
             <Button Grid.Column="1" Content="Save Board" Margin="15"/>
             <Button Grid.Column="2" Content="Add Column" Margin="15" Command="{Binding AddColumnsCommand}" Cursor="Hand"/>
-            <Button Grid.Column="3" Content="New Card" Margin="15" Click="btnAdd_Card" Cursor="Hand"/>
+            <Button Grid.Column="3" Content="New Card" Margin="15" Click="btnAdd_Card" DataContext="{Binding}" Cursor="Hand"/>
         </Grid>
 
 
@@ -72,12 +72,18 @@
                                 </Grid.RowDefinitions>
                                 
                                 <!-- Column Header -->
-                                <Border Grid.Row="0" CornerRadius="7,7,0,0" Background="#4795fc" Height="40">
+                                <Border Grid.Row="0" 
+                                        CornerRadius="7,7,0,0" Background="#4795fc" 
+                                        Height="40"
+                                        MouseLeftButtonDown="ColumnHeader_MouseLeftButtonDown"
+                                        MouseMove="ColumnHeader_MouseMove"
+                                        AllowDrop="True"
+                                        Drop="ColumnHeader_Drop"
+                                        DragOver="ColumnHeader_DragOver">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
@@ -119,6 +125,7 @@
 
                                         <!-- Button Add -->
                                         <Button Grid.Column="3"
+                                                Margin="5"
                                                 Background="Transparent"
                                                 BorderBrush="Transparent"
                                                 Cursor="Hand"
@@ -126,10 +133,6 @@
                                                 CommandParameter="{Binding}">
                                             <Image Source="Icons/add.ico" Width="16" Height="16"/>
                                         </Button>
-
-                                        <!-- Button Move -->
-                                        <Image Grid.Column="4" Source="Icons/menu.ico" Width="20" Height="20" Margin="5"/>
-
                                     </Grid>
                                 </Border>
 
@@ -201,7 +204,8 @@
                                                 FontWeight="SemiBold"
                                                 HorizontalAlignment="Stretch"
                                                 Command="{Binding DataContext.AddCardCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                CommandParameter="{Binding}"/>
+                                                CommandParameter="{Binding}"
+                                                DataContext="{Binding}"/>
                                     </StackPanel>
                                 </ScrollViewer>
                             </Grid>

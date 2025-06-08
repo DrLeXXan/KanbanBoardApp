@@ -7,17 +7,19 @@ namespace KanbanBoardApp.ViewModels
     {
         public KanbanCard Card { get; }
         public List<string> UrgencyCollection { get; }
+        public List<KanbanColumn> Columns { get; } // Add this property
+        public KanbanColumn? SelectedColumn { get; set; } // For binding
+
         public bool IsExistingCard { get; }
         public int NextId { get; }
 
-        public CardDialogViewModel(KanbanCard? card = null)
+        public CardDialogViewModel(KanbanCard? card = null, List<KanbanColumn>? columns = null, KanbanColumn? defaultColumn = null)
         {
             if (card == null)
             {
-                //int nextId = KanbanCard.GetNextId();
                 int nextId = KanbanCard.PeekNextId();
                 Card = new KanbanCard() { Id = nextId, Urgency = "Medium" };
-                NextId = IsExistingCard ? Card.Id : KanbanCard.PeekNextId();
+                NextId = nextId;
                 IsExistingCard = false;
             }
             else
@@ -27,6 +29,12 @@ namespace KanbanBoardApp.ViewModels
                 IsExistingCard = true;
             }
             UrgencyCollection = new List<string> { "Low", "Medium", "High", "Urgent" };
+            Columns = columns ?? new List<KanbanColumn>();
+            // Set SelectedColumn to defaultColumn if provided, otherwise use Card.Status
+            if (defaultColumn != null)
+                SelectedColumn = Columns.FirstOrDefault(c => c.Title == defaultColumn.Title);
+            else
+                SelectedColumn = Columns.FirstOrDefault(c => c.Title == Card.Status);
         }
     }
 }

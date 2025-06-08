@@ -34,14 +34,25 @@ namespace KanbanBoardApp
         private void btnAdd_Card(object sender, RoutedEventArgs e)
         {
             var vm = DataContext as MainViewModel;
-            var column = vm?.Columns.FirstOrDefault();
-            if (column == null) return;
+            if (vm == null) return;
 
-            var dialog = new CardDialog();
+            KanbanColumn? defaultColumn = null;
+
+            // If the sender is a Button inside a column, get its DataContext
+            if (sender is Button btn && btn.DataContext is KanbanColumn col)
+                defaultColumn = col;
+            else
+                defaultColumn = vm.Columns.FirstOrDefault();
+
+            var dialog = new CardDialog(null, vm.Columns.ToList(), defaultColumn);
             if (dialog.ShowDialog() == true)
             {
                 var card = dialog.GetCard();
-                column.Cards.Add(card);
+                var targetColumn = vm.Columns.FirstOrDefault(c => c.Title == card.Status);
+                if (targetColumn != null)
+                    targetColumn.Cards.Add(card);
+                else if (vm.Columns.Any())
+                    vm.Columns[0].Cards.Add(card);
             }
         }
 
@@ -116,29 +127,49 @@ namespace KanbanBoardApp
 
         private void Open_Card_In_Dialog(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 2 && sender is Border border && border.DataContext is KanbanBoardApp.Models.KanbanCard card)
+            if (e.ClickCount == 2 && sender is Border border && border.DataContext is KanbanCard card)
             {
-                var column = ((KanbanBoardApp.ViewModels.MainViewModel)DataContext).Columns
-                    .FirstOrDefault(col => col.Cards.Contains(card));
-                if (column == null) return;
+                var vm = (MainViewModel)DataContext;
+                var currentColumn = vm.Columns.FirstOrDefault(col => col.Cards.Contains(card));
+                if (currentColumn == null) return;
 
-                // Pass a copy to the dialog
                 var cardCopy = card.Clone();
-                var dialog = new KanbanBoardApp.View.CardDialog(cardCopy);
+                var dialog = new CardDialog(cardCopy, vm.Columns.ToList());
                 if (dialog.ShowDialog() == true)
                 {
                     if (dialog.IsDeleteRequested)
                     {
-                        column.Cards.Remove(card);
+                        currentColumn.Cards.Remove(card);
                     }
                     else
                     {
-                        // Copy edited values back to the original card
                         var edited = dialog.GetCard();
+
+                        // Move card to new column if status changed
+                        if (edited.Status != currentColumn.Title)
+                        {
+                            var newColumn = vm.Columns.FirstOrDefault(col => col.Title == edited.Status);
+                            if (newColumn != null)
+                            {
+                                currentColumn.Cards.Remove(card);
+                                newColumn.Cards.Add(card);
+                                // Update card properties
+                                card.Title = edited.Title;
+                                card.Owner = edited.Owner;
+                                card.Description = edited.Description;
+                                card.Urgency = edited.Urgency;
+                                card.Status = edited.Status;
+                                card.DueDate = edited.DueDate;
+                                return;
+                            }
+                        }
+
+                        // Update card properties if not moved
                         card.Title = edited.Title;
                         card.Owner = edited.Owner;
                         card.Description = edited.Description;
                         card.Urgency = edited.Urgency;
+                        card.Status = edited.Status;
                         card.DueDate = edited.DueDate;
                     }
                 }
@@ -209,6 +240,67 @@ namespace KanbanBoardApp
                 {
                     sourceColumn.Cards.Remove(card);
                     targetColumn.Cards.Add(card);
+                }
+            }
+        }
+
+        private Point _columnDragStartPoint;
+        private KanbanColumn? _draggedColumn;
+
+        // Column header mouse down: start drag
+        private void ColumnHeader_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _columnDragStartPoint = e.GetPosition(null);
+
+            if (sender is Border border && border.DataContext is KanbanColumn column)
+            {
+                _draggedColumn = column;
+            }
+        }
+
+        // Column header mouse move: initiate drag if moved enough
+        private void ColumnHeader_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && _draggedColumn != null)
+            {
+                var pos = e.GetPosition(null);
+                if (Math.Abs(pos.X - _columnDragStartPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                    Math.Abs(pos.Y - _columnDragStartPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+                    DragDrop.DoDragDrop((DependencyObject)sender, _draggedColumn, DragDropEffects.Move);
+                    _draggedColumn = null;
+                }
+            }
+        }
+
+        // Allow dropping on header
+        private void ColumnHeader_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(KanbanColumn)))
+                e.Effects = DragDropEffects.Move;
+            else
+                e.Effects = DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        // Handle drop: reorder columns
+        private void ColumnHeader_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(KanbanColumn)))
+            {
+                var draggedColumn = e.Data.GetData(typeof(KanbanColumn)) as KanbanColumn;
+                if (sender is Border border && border.DataContext is KanbanColumn targetColumn && draggedColumn != null && draggedColumn != targetColumn)
+                {
+                    var vm = DataContext as KanbanBoardApp.ViewModels.MainViewModel;
+                    if (vm == null) return;
+
+                    int oldIndex = vm.Columns.IndexOf(draggedColumn);
+                    int newIndex = vm.Columns.IndexOf(targetColumn);
+
+                    if (oldIndex >= 0 && newIndex >= 0 && oldIndex != newIndex)
+                    {
+                        vm.Columns.Move(oldIndex, newIndex);
+                    }
                 }
             }
         }

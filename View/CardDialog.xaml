@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:KanbanBoardApp.View"
         xmlns:CC="clr-namespace:KanbanBoardApp.CustomControls"
         mc:Ignorable="d"
-        Title="Kanban Card" Height="520" Width="350"
+        Title="Kanban Card" Height="580" Width="350"
         ResizeMode="NoResize">
      
      <Window.Resources>
@@ -16,7 +16,7 @@
 
     <StackPanel Orientation="Vertical">
         <!-- Card Header-->
-        <Grid Margin="10,0,10,0">
+        <Grid Margin="10,0,10,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -42,6 +42,8 @@
         <!-- Card Content -->
         <Grid Margin="10,5,10,5">
             <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -81,16 +83,18 @@
                 <CC:PlaceHolderTextBox Grid.Row="1" Grid.Column="1" PlaceHolder="" CornerRadius="5" BorderThickness="1" Padding="1"
                            Text="{Binding Card.Owner, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
-            
-            <!-- Card Priority -->
+
+            <!-- Card Status -->
             <TextBlock Grid.Row="2" Grid.Column="0"
-                       Text="Priority"
+                       Text="Status"
                        Margin="5,0,0,0"
                        HorizontalAlignment="Left"/>
             <ComboBox Grid.Row="3" Grid.Column="0"
                       Margin="5"
-                      ItemsSource="{Binding UrgencyCollection}"
-                      SelectedItem="{Binding Card.Urgency, UpdateSourceTrigger=PropertyChanged}"/>
+                      ItemsSource="{Binding Columns}"
+                      DisplayMemberPath="Title"
+                      SelectedItem="{Binding SelectedColumn, Mode=TwoWay}"/>
+            
             <!-- Card Date -->
             <TextBlock Grid.Row="2" Grid.Column="1"
                        Text="Due Date"
@@ -99,6 +103,21 @@
             <DatePicker Grid.Row="3" Grid.Column="1" 
                         Margin="5" 
                         SelectedDate="{Binding Card.DueDate, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <!-- Card Priority -->
+            <TextBlock Grid.Row="4" Grid.Column="0"
+                       Text="Priority"
+                       Margin="5,0,0,0"
+                       HorizontalAlignment="Left"/>
+            <ComboBox Grid.Row="5" Grid.Column="0"
+                      Margin="5"
+                      ItemsSource="{Binding UrgencyCollection}"
+                      SelectedItem="{Binding Card.Urgency, UpdateSourceTrigger=PropertyChanged}"/>
+            <!-- View Log -->
+            <Button Grid.Row="5" Grid.Column="1"
+                    Width="120" Height="25"
+                    VerticalAlignment="Center"
+                    Content="View Card Activity"/>
         </Grid>
         
         <!-- Card Description -->
@@ -114,16 +133,18 @@
                                    PlaceHolder="" Text="{Binding Card.Description, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
 
-        <!-- Card Comments Section ||||||||||||   WORKE IN PROGRESS -->
-        <TextBlock Margin="10,0,10,0">Comments</TextBlock>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="15">
-            <TextBlock Height="90">
-                Testing<LineBreak />
-                Testing<LineBreak />
-                Testing<LineBreak />
-                Testing<LineBreak />
-            </TextBlock>
-        </ScrollViewer>
+        <!-- Card Comments/Notes  -->      
+        <StackPanel Margin="10,5,10,5">
+            <TextBlock Text="Comments/Notes" Margin="5,0,0,5"/>
+            <CC:PlaceHolderTextBox TextWrapping="Wrap" 
+                                       AcceptsReturn="True" 
+                                       VerticalContentAlignment="Top"
+                                       Padding="1"
+                                       Height="100" 
+                                       CornerRadius="5" 
+                                       BorderThickness="1"
+                                       PlaceHolder="" Text="{Binding Card.Description, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
 
         <!-- Row with buttons-->
         <StackPanel Orientation="Horizontal" Height="45" Margin="10,5,5,5" HorizontalAlignment="Center">

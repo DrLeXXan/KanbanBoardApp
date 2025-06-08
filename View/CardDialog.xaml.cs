@@ -23,10 +23,10 @@ namespace KanbanBoardApp.View
         public CardDialogViewModel ViewModel { get; }
         public bool IsDeleteRequested { get; private set; }
 
-        public CardDialog(KanbanCard? card = null)
+        public CardDialog(KanbanCard? card = null, List<KanbanColumn>? columns = null, KanbanColumn? defaultColumn = null)
         {
             InitializeComponent();
-            ViewModel = new CardDialogViewModel(card);
+            ViewModel = new CardDialogViewModel(card, columns, defaultColumn);
             DataContext = ViewModel;
         }
 
@@ -47,6 +47,11 @@ namespace KanbanBoardApp.View
             }
             else
             {
+                if (ViewModel.SelectedColumn != null)
+                {
+                    ViewModel.Card.Status = ViewModel.SelectedColumn.Title;
+                }
+
                 if (ViewModel.IsExistingCard == false)
                 {
                     KanbanCard.GetNextId();

@@ -11,6 +11,7 @@ namespace KanbanBoardApp.Models
         private string _owner = string.Empty;
         private string _description = string.Empty;
         private string _urgency = string.Empty;
+        private string _status = string.Empty;
         private DateTime? _dueDate;
 
         public int Id
@@ -42,6 +43,11 @@ namespace KanbanBoardApp.Models
             get => _urgency;
             set { _urgency = value; OnPropertyChanged(nameof(Urgency)); }
         }
+        public string Status
+        {
+            get => _status;
+            set { _status = value; OnPropertyChanged(nameof(Status)); }
+        }   
         public DateTime? DueDate
         {
             get => _dueDate;
@@ -58,6 +64,7 @@ namespace KanbanBoardApp.Models
                 Owner = this.Owner,
                 Description = this.Description,
                 Urgency = this.Urgency,
+                Status = this.Status,
                 DueDate = this.DueDate
             };
         }

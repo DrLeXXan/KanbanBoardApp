@@ -59,7 +59,7 @@ namespace KanbanBoardApp.ViewModels
         {
             if (parameter is KanbanColumn column)
             {
-                var dialog = new KanbanBoardApp.View.CardDialog();
+                var dialog = new KanbanBoardApp.View.CardDialog(null, Columns.ToList(), column);
                 if (dialog.ShowDialog() == true)
                 {
                     var card = dialog.GetCard();
