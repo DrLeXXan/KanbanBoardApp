@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:KanbanBoardApp.View"
         xmlns:CC="clr-namespace:KanbanBoardApp.CustomControls"
         mc:Ignorable="d"
-        Title="Kanban Card" Height="520" Width="350">
+        Title="Kanban Card" Height="520" Width="350"
+        ResizeMode="NoResize">
      
      <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
@@ -47,6 +48,7 @@
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -79,14 +81,24 @@
                 <CC:PlaceHolderTextBox Grid.Row="1" Grid.Column="1" PlaceHolder="" CornerRadius="5" BorderThickness="1" Padding="1"
                            Text="{Binding Card.Owner, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
+            
             <!-- Card Priority -->
-            <ComboBox Grid.Row="2" Grid.Column="0"
-                        VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Width="120" Margin="5"
-                        ItemsSource="{Binding UrgencyCollection}"
-                        SelectedItem="{Binding Card.Urgency, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0"
+                       Text="Priority"
+                       Margin="5,0,0,0"
+                       HorizontalAlignment="Left"/>
+            <ComboBox Grid.Row="3" Grid.Column="0"
+                      Margin="5"
+                      ItemsSource="{Binding UrgencyCollection}"
+                      SelectedItem="{Binding Card.Urgency, UpdateSourceTrigger=PropertyChanged}"/>
             <!-- Card Date -->
-            <DatePicker Grid.Row="2" Grid.Column="1" Margin="5" SelectedDate="{Binding Card.DueDate, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Grid.Row="2" Grid.Column="1"
+                       Text="Due Date"
+                       Margin="5,0,0,0"
+                       HorizontalAlignment="Left"/>
+            <DatePicker Grid.Row="3" Grid.Column="1" 
+                        Margin="5" 
+                        SelectedDate="{Binding Card.DueDate, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
         
         <!-- Card Description -->

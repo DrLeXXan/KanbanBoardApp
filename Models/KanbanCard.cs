@@ -48,6 +48,20 @@ namespace KanbanBoardApp.Models
             set { _dueDate = value; OnPropertyChanged(nameof(DueDate)); }
         }
 
+        // To be used for editing the card without changing the actual card
+        public KanbanCard Clone()
+        {
+            return new KanbanCard
+            {
+                Id = this.Id,
+                Title = this.Title,
+                Owner = this.Owner,
+                Description = this.Description,
+                Urgency = this.Urgency,
+                DueDate = this.DueDate
+            };
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

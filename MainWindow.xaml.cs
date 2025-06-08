@@ -118,20 +118,28 @@ namespace KanbanBoardApp
         {
             if (e.ClickCount == 2 && sender is Border border && border.DataContext is KanbanBoardApp.Models.KanbanCard card)
             {
-                // Find the parent column
-                var column = (from col in ((KanbanBoardApp.ViewModels.MainViewModel)DataContext).Columns
-                              where col.Cards.Contains(card)
-                              select col).FirstOrDefault();
-
+                var column = ((KanbanBoardApp.ViewModels.MainViewModel)DataContext).Columns
+                    .FirstOrDefault(col => col.Cards.Contains(card));
                 if (column == null) return;
 
-                // Open dialog with the existing card
-                var dialog = new KanbanBoardApp.View.CardDialog(card);
+                // Pass a copy to the dialog
+                var cardCopy = card.Clone();
+                var dialog = new KanbanBoardApp.View.CardDialog(cardCopy);
                 if (dialog.ShowDialog() == true)
                 {
                     if (dialog.IsDeleteRequested)
                     {
                         column.Cards.Remove(card);
+                    }
+                    else
+                    {
+                        // Copy edited values back to the original card
+                        var edited = dialog.GetCard();
+                        card.Title = edited.Title;
+                        card.Owner = edited.Owner;
+                        card.Description = edited.Description;
+                        card.Urgency = edited.Urgency;
+                        card.DueDate = edited.DueDate;
                     }
                 }
             }
