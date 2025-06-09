@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.IO;
 
 namespace KanbanBoardApp.ViewModels
 {
@@ -17,6 +20,7 @@ namespace KanbanBoardApp.ViewModels
         public ICommand AddColumnsCommand { get; }
         public ICommand DeleteColumnCommand { get; set; }
         public ICommand AddCardCommand { get; }
+        public ICommand SaveBoardCommand { get; }
 
         public MainViewModel()
         {
@@ -32,6 +36,7 @@ namespace KanbanBoardApp.ViewModels
             AddColumnsCommand = new RelayCommand(AddColumnHandler);
             DeleteColumnCommand = new RelayCommand(DeleteColumnHandler);
             AddCardCommand = new RelayCommand(AddCardHandler);
+            SaveBoardCommand = new RelayCommand(_ => SaveBoard());
         }
 
         private void AddColumnHandler(object? parameter)
@@ -88,7 +93,39 @@ namespace KanbanBoardApp.ViewModels
             });
         }
 
+        public void SaveBoard(string? filePath = null)
+        {
+            var boardData = Columns.ToList();
 
-        // Implement INotifyPropertyChanged...
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                ReferenceHandler = ReferenceHandler.IgnoreCycles
+            };
+
+            string json = JsonSerializer.Serialize(boardData, options);
+
+            if (filePath == null)
+                return;
+
+            File.WriteAllText(filePath, json);
+        }
+
+        public void LoadBoardFromJson(string json)
+        {
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                ReferenceHandler = ReferenceHandler.IgnoreCycles
+            };
+            var columns = JsonSerializer.Deserialize<List<KanbanColumn>>(json, options);
+            if (columns != null)
+            {
+                Columns.Clear();
+                foreach (var col in columns)
+                    Columns.Add(col);
+            }
+        }
+
     }   
 }

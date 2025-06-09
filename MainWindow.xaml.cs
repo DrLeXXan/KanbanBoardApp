@@ -1,16 +1,13 @@
 ﻿using KanbanBoardApp.Models;
 using KanbanBoardApp.View;
 using KanbanBoardApp.ViewModels;
-using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.IO;
+
 
 namespace KanbanBoardApp
 {
@@ -411,6 +408,40 @@ namespace KanbanBoardApp
                 });
         }
 
+        private void SaveBoard_Click(object sender, RoutedEventArgs e)
+        {
+            var vm = DataContext as MainViewModel;
+            if (vm == null) return;
+
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Filter = "JSON Files (*.json)|*.json",
+                DefaultExt = "json",
+                FileName = "KanbanBoard.json"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                vm.SaveBoard(dialog.FileName);
+                MessageBox.Show("Board saved successfully.", "Save", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void LoadBoard_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "JSON Files (*.json)|*.json",
+                DefaultExt = "json"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                var json = File.ReadAllText(dialog.FileName);
+                var vm = DataContext as MainViewModel;
+                vm?.LoadBoardFromJson(json);
+            }
+        }
 
 
     }
