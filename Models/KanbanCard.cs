@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace KanbanBoardApp.Models
 {
@@ -57,7 +58,7 @@ namespace KanbanBoardApp.Models
         // To be used for editing the card without changing the actual card
         public KanbanCard Clone()
         {
-            return new KanbanCard
+            var clone = new KanbanCard
             {
                 Id = this.Id,
                 Title = this.Title,
@@ -65,9 +66,13 @@ namespace KanbanBoardApp.Models
                 Description = this.Description,
                 Urgency = this.Urgency,
                 Status = this.Status,
-                DueDate = this.DueDate
+                DueDate = this.DueDate,
+                History = new ObservableCollection<UserActivityEntry>(this.History)
             };
+            return clone;
         }
+
+        public ObservableCollection<UserActivityEntry> History { get; set; } = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName) =>

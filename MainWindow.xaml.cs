@@ -53,6 +53,16 @@ namespace KanbanBoardApp
                     targetColumn.Cards.Add(card);
                 else if (vm.Columns.Any())
                     vm.Columns[0].Cards.Add(card);
+
+                // Add initial history entry
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Created",
+                    OldValue = "",
+                    NewValue = $"Title: {card.Title}, Status: {card.Status}",
+                    ChangedBy = Environment.UserName
+                });
             }
         }
 
@@ -99,7 +109,7 @@ namespace KanbanBoardApp
                     col.IsEditing = false;
             }
         }
-        
+
         public void DeleteColumnWithConfirmation(KanbanColumn column)
         {
             if (column.Cards.Count > 0)
@@ -151,6 +161,9 @@ namespace KanbanBoardApp
                             var newColumn = vm.Columns.FirstOrDefault(col => col.Title == edited.Status);
                             if (newColumn != null)
                             {
+                                // Record status change before moving and updating
+                                RecordCardHistory(card, edited);
+
                                 currentColumn.Cards.Remove(card);
                                 newColumn.Cards.Add(card);
                                 // Update card properties
@@ -160,9 +173,16 @@ namespace KanbanBoardApp
                                 card.Urgency = edited.Urgency;
                                 card.Status = edited.Status;
                                 card.DueDate = edited.DueDate;
+
+                                // Sync history to the clone for dialog display
+                                cardCopy.History.Clear();
+                                foreach (var entry in card.History)
+                                    cardCopy.History.Add(entry);
                                 return;
                             }
                         }
+
+                        RecordCardHistory(card, edited);
 
                         // Update card properties if not moved
                         card.Title = edited.Title;
@@ -171,6 +191,11 @@ namespace KanbanBoardApp
                         card.Urgency = edited.Urgency;
                         card.Status = edited.Status;
                         card.DueDate = edited.DueDate;
+
+                        // Sync history to the clone for dialog display
+                        cardCopy.History.Clear();
+                        foreach (var entry in card.History)
+                            cardCopy.History.Add(entry);
                     }
                 }
             }
@@ -223,7 +248,7 @@ namespace KanbanBoardApp
                 var card = e.Data.GetData(typeof(KanbanBoardApp.Models.KanbanCard)) as KanbanBoardApp.Models.KanbanCard;
                 if (card == null) return;
 
-                // The sender is now the Border (the column)
+                // sender is the Border (the column)
                 var border = sender as Border;
                 var targetColumn = border?.DataContext as KanbanBoardApp.Models.KanbanColumn;
                 if (targetColumn == null) return;
@@ -238,8 +263,25 @@ namespace KanbanBoardApp
 
                 if (sourceColumn != targetColumn)
                 {
+                    // Record history before changing status
+                    string oldStatus = card.Status;
+                    string newStatus = targetColumn.Title;
+
                     sourceColumn.Cards.Remove(card);
                     targetColumn.Cards.Add(card);
+
+                    // Update the card's status
+                    card.Status = newStatus;
+
+                    // Record the status change in history
+                    card.History.Add(new UserActivityEntry
+                    {
+                        Timestamp = DateTime.Now,
+                        PropertyChanged = "Status",
+                        OldValue = oldStatus,
+                        NewValue = newStatus,
+                        ChangedBy = Environment.UserName
+                    });
                 }
             }
         }
@@ -304,8 +346,73 @@ namespace KanbanBoardApp
                 }
             }
         }
+
+        private void RecordCardHistory(KanbanCard card, KanbanCard edited)
+        {
+            var user = Environment.UserName;
+
+            if (card.Title != edited.Title)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Title",
+                    OldValue = card.Title,
+                    NewValue = edited.Title,
+                    ChangedBy = user
+                });
+
+            if (card.Owner != edited.Owner)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Owner",
+                    OldValue = card.Owner,
+                    NewValue = edited.Owner,
+                    ChangedBy = user
+                });
+
+            if (card.Description != edited.Description)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Description",
+                    OldValue = card.Description,
+                    NewValue = edited.Description,
+                    ChangedBy = user
+                });
+
+            if (card.Urgency != edited.Urgency)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Urgency",
+                    OldValue = card.Urgency,
+                    NewValue = edited.Urgency,
+                    ChangedBy = user
+                });
+
+            if (card.Status != edited.Status)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Status",
+                    OldValue = card.Status,
+                    NewValue = edited.Status,
+                    ChangedBy = user
+                });
+
+            if (card.DueDate != edited.DueDate)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "DueDate",
+                    OldValue = card.DueDate?.ToString() ?? "",
+                    NewValue = edited.DueDate?.ToString() ?? "",
+                    ChangedBy = user
+                });
+        }
+
+
+
     }
-
-
-
 }

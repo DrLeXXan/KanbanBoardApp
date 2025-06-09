@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:KanbanBoardApp.View"
         xmlns:CC="clr-namespace:KanbanBoardApp.CustomControls"
         mc:Ignorable="d"
-        Title="Kanban Card" Height="580" Width="350"
+        Title="Kanban Card" Height="838" Width="350"
         ResizeMode="NoResize">
      
      <Window.Resources>
@@ -40,7 +40,7 @@
         
 
         <!-- Card Content -->
-        <Grid Margin="10,5,10,5">
+        <Grid Margin="10,5,10,0">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -105,23 +105,19 @@
                         SelectedDate="{Binding Card.DueDate, UpdateSourceTrigger=PropertyChanged}"/>
 
             <!-- Card Priority -->
-            <TextBlock Grid.Row="4" Grid.Column="0"
+            <TextBlock Grid.Row="4" Grid.Column="1"
                        Text="Priority"
                        Margin="5,0,0,0"
                        HorizontalAlignment="Left"/>
-            <ComboBox Grid.Row="5" Grid.Column="0"
+            <ComboBox Grid.Row="5" Grid.Column="1"
                       Margin="5"
                       ItemsSource="{Binding UrgencyCollection}"
                       SelectedItem="{Binding Card.Urgency, UpdateSourceTrigger=PropertyChanged}"/>
-            <!-- View Log -->
-            <Button Grid.Row="5" Grid.Column="1"
-                    Width="120" Height="25"
-                    VerticalAlignment="Center"
-                    Content="View Card Activity"/>
+            
         </Grid>
         
         <!-- Card Description -->
-        <StackPanel Margin="10,5,10,5">
+        <StackPanel Margin="10,0,10,5">
             <TextBlock Text="Description" Margin="5,0,0,5"/>
             <CC:PlaceHolderTextBox TextWrapping="Wrap" 
                                    AcceptsReturn="True" 
@@ -145,6 +141,20 @@
                                        BorderThickness="1"
                                        PlaceHolder="" Text="{Binding Card.Description, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
+
+        <Expander Header="Card History" IsExpanded="False" Margin="10,5,10,5">
+            <ListView ItemsSource="{Binding Card.History}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Time" DisplayMemberBinding="{Binding Timestamp}" Width="120"/>
+                        <GridViewColumn Header="Property" DisplayMemberBinding="{Binding PropertyChanged}" Width="80"/>
+                        <GridViewColumn Header="Old" DisplayMemberBinding="{Binding OldValue}" Width="80"/>
+                        <GridViewColumn Header="New" DisplayMemberBinding="{Binding NewValue}" Width="80"/>
+                        <GridViewColumn Header="By" DisplayMemberBinding="{Binding ChangedBy}" Width="80"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Expander>
 
         <!-- Row with buttons-->
         <StackPanel Orientation="Horizontal" Height="45" Margin="10,5,5,5" HorizontalAlignment="Center">
