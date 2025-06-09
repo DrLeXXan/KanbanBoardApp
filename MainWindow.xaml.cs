@@ -31,39 +31,26 @@ namespace KanbanBoardApp
             }
         }
 
-        private void btnAdd_Card(object sender, RoutedEventArgs e)
+        private void AddCard(KanbanColumn? defaultColumn = null)
         {
             var vm = DataContext as MainViewModel;
             if (vm == null) return;
 
-            KanbanColumn? defaultColumn = null;
-
-            // If the sender is a Button inside a column, get its DataContext
-            if (sender is Button btn && btn.DataContext is KanbanColumn col)
-                defaultColumn = col;
-            else
-                defaultColumn = vm.Columns.FirstOrDefault();
-
-            var dialog = new CardDialog(null, vm.Columns.ToList(), defaultColumn);
+            var dialog = new CardDialog(null, vm.Columns.ToList(), defaultColumn ?? vm.Columns.FirstOrDefault());
             if (dialog.ShowDialog() == true)
             {
                 var card = dialog.GetCard();
-                var targetColumn = vm.Columns.FirstOrDefault(c => c.Title == card.Status);
-                if (targetColumn != null)
-                    targetColumn.Cards.Add(card);
-                else if (vm.Columns.Any())
-                    vm.Columns[0].Cards.Add(card);
-
-                // Add initial history entry
-                card.History.Add(new UserActivityEntry
-                {
-                    Timestamp = DateTime.Now,
-                    PropertyChanged = "Created",
-                    OldValue = "",
-                    NewValue = $"Title: {card.Title}, Status: {card.Status}",
-                    ChangedBy = Environment.UserName
-                });
+                vm.AddCardToColumn(card);
             }
+        }
+
+        // Use this for both header and column add buttons:
+        private void btnAdd_Card(object sender, RoutedEventArgs e)
+        {
+            KanbanColumn? defaultColumn = null;
+            if (sender is Button btn && btn.DataContext is KanbanColumn col)
+                defaultColumn = col;
+            AddCard(defaultColumn);
         }
 
         private void ColumnTitle_MouseDown(object sender, MouseButtonEventArgs e)
@@ -173,6 +160,7 @@ namespace KanbanBoardApp
                                 card.Urgency = edited.Urgency;
                                 card.Status = edited.Status;
                                 card.DueDate = edited.DueDate;
+                                card.Comment = edited.Comment;
 
                                 // Sync history to the clone for dialog display
                                 cardCopy.History.Clear();
@@ -191,6 +179,7 @@ namespace KanbanBoardApp
                         card.Urgency = edited.Urgency;
                         card.Status = edited.Status;
                         card.DueDate = edited.DueDate;
+                        card.Comment = edited.Comment;
 
                         // Sync history to the clone for dialog display
                         cardCopy.History.Clear();
@@ -408,6 +397,16 @@ namespace KanbanBoardApp
                     PropertyChanged = "DueDate",
                     OldValue = card.DueDate?.ToString() ?? "",
                     NewValue = edited.DueDate?.ToString() ?? "",
+                    ChangedBy = user
+                });
+
+            if (card.Comment != edited.Comment)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Description",
+                    OldValue = card.Description,
+                    NewValue = edited.Description,
                     ChangedBy = user
                 });
         }

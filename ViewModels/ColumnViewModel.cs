@@ -63,12 +63,29 @@ namespace KanbanBoardApp.ViewModels
                 if (dialog.ShowDialog() == true)
                 {
                     var card = dialog.GetCard();
-                    if (card != null && card.Id == 0)
-                        card.Id = KanbanCard.GetNextId();
                     if (card != null)
-                        column.Cards.Add(card);
+                        AddCardToColumn(card);
                 }
             }
+        }
+
+        public void AddCardToColumn(KanbanCard card)
+        {
+            var targetColumn = Columns.FirstOrDefault(c => c.Title == card.Status);
+            if (targetColumn != null)
+                targetColumn.Cards.Add(card);
+            else if (Columns.Any())
+                Columns[0].Cards.Add(card);
+
+            // Add initial history entry
+            card.History.Add(new UserActivityEntry
+            {
+                Timestamp = DateTime.Now,
+                PropertyChanged = "Created",
+                OldValue = "",
+                NewValue = $"Title: {card.Title}, Status: {card.Status}",
+                ChangedBy = Environment.UserName
+            });
         }
 
 

@@ -28,6 +28,12 @@ namespace KanbanBoardApp.View
             InitializeComponent();
             ViewModel = new CardDialogViewModel(card, columns, defaultColumn);
             DataContext = ViewModel;
+
+            if (ViewModel.IsExistingCard == false)
+            {
+                Loaded += (s, e) => TitleTextBox.Focus();
+            }
+            
         }
 
         public KanbanCard GetCard() => ViewModel.Card;

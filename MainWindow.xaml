@@ -41,7 +41,7 @@
             <TextBlock Grid.Column="0" Text="KANBAN Board" FontFamily="Georgia" FontSize="40" FontWeight="Bold" VerticalAlignment="Center" Margin="25,0,0,0"/>
             <Button Grid.Column="1" Content="Save Board" Margin="15"/>
             <Button Grid.Column="2" Content="Add Column" Margin="15" Command="{Binding AddColumnsCommand}" Cursor="Hand"/>
-            <Button Grid.Column="3" Content="New Card" Margin="15" Click="btnAdd_Card" DataContext="{Binding}" Cursor="Hand"/>
+            <Button Grid.Column="3" Content="New Card" Margin="15" Click="btnAdd_Card" Cursor="Hand"/>
         </Grid>
 
 
@@ -204,8 +204,7 @@
                                                 FontWeight="SemiBold"
                                                 HorizontalAlignment="Stretch"
                                                 Command="{Binding DataContext.AddCardCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                CommandParameter="{Binding}"
-                                                DataContext="{Binding}"/>
+                                                CommandParameter="{Binding}"/>
                                     </StackPanel>
                                 </ScrollViewer>
                             </Grid>

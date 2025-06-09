@@ -13,6 +13,7 @@ namespace KanbanBoardApp.Models
         private string _description = string.Empty;
         private string _urgency = string.Empty;
         private string _status = string.Empty;
+        private string _comment = string.Empty;
         private DateTime? _dueDate;
 
         public int Id
@@ -55,6 +56,12 @@ namespace KanbanBoardApp.Models
             set { _dueDate = value; OnPropertyChanged(nameof(DueDate)); }
         }
 
+        public string Comment
+        {
+            get => _comment;
+            set { _comment = value; OnPropertyChanged(nameof(Comment)); }
+        }
+
         // To be used for editing the card without changing the actual card
         public KanbanCard Clone()
         {
@@ -67,6 +74,7 @@ namespace KanbanBoardApp.Models
                 Urgency = this.Urgency,
                 Status = this.Status,
                 DueDate = this.DueDate,
+                Comment = this.Comment,
                 History = new ObservableCollection<UserActivityEntry>(this.History)
             };
             return clone;
