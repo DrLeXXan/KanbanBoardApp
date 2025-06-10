@@ -111,10 +111,8 @@ namespace KanbanBoardApp
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    if (DataContext is MainViewModel vm && vm.Columns.Contains(column))
-                    {
-                        vm.Columns.Remove(column);
-                    }
+                    if (DataContext is MainViewModel vm)
+                        vm.RemoveColumn(column);
                 }
             }
         }
@@ -146,7 +144,7 @@ namespace KanbanBoardApp
                             if (newColumn != null)
                             {
                                 // Record status change before moving and updating
-                                RecordCardHistory(card, edited);
+                                vm.RecordCardHistory(card, edited);
 
                                 currentColumn.Cards.Remove(card);
                                 newColumn.Cards.Add(card);
@@ -167,7 +165,7 @@ namespace KanbanBoardApp
                             }
                         }
 
-                        RecordCardHistory(card, edited);
+                        vm.RecordCardHistory(card, edited);
 
                         // Update card properties if not moved
                         card.Title = edited.Title;
@@ -229,48 +227,20 @@ namespace KanbanBoardApp
 
         private void Cards_Drop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(typeof(KanbanBoardApp.Models.KanbanCard)))
+            if (e.Data.GetDataPresent(typeof(KanbanCard)))
             {
-                var card = e.Data.GetData(typeof(KanbanBoardApp.Models.KanbanCard)) as KanbanBoardApp.Models.KanbanCard;
+                var card = e.Data.GetData(typeof(KanbanCard)) as KanbanCard;
                 if (card == null) return;
 
-                // sender is the Border (the column)
                 var border = sender as Border;
-                var targetColumn = border?.DataContext as KanbanBoardApp.Models.KanbanColumn;
+                var targetColumn = border?.DataContext as KanbanColumn;
                 if (targetColumn == null) return;
 
-                var vm = DataContext as KanbanBoardApp.ViewModels.MainViewModel;
-                var sourceColumn = vm?.Columns.FirstOrDefault(col => col.Cards.Contains(card));
-                if (sourceColumn == null)
-                {
-                    MessageBox.Show("Source column not found!");
-                    return;
-                }
-
-                if (sourceColumn != targetColumn)
-                {
-                    // Record history before changing status
-                    string oldStatus = card.Status;
-                    string newStatus = targetColumn.Title;
-
-                    sourceColumn.Cards.Remove(card);
-                    targetColumn.Cards.Add(card);
-
-                    // Update the card's status
-                    card.Status = newStatus;
-
-                    // Record the status change in history
-                    card.History.Add(new UserActivityEntry
-                    {
-                        Timestamp = DateTime.Now,
-                        PropertyChanged = "Status",
-                        OldValue = oldStatus,
-                        NewValue = newStatus,
-                        ChangedBy = Environment.UserName
-                    });
-                }
+                var vm = DataContext as MainViewModel;
+                vm?.MoveCard(card, targetColumn);
             }
         }
+
 
         private Point _columnDragStartPoint;
         private KanbanColumn? _draggedColumn;
@@ -319,94 +289,15 @@ namespace KanbanBoardApp
                 var draggedColumn = e.Data.GetData(typeof(KanbanColumn)) as KanbanColumn;
                 if (sender is Border border && border.DataContext is KanbanColumn targetColumn && draggedColumn != null && draggedColumn != targetColumn)
                 {
-                    var vm = DataContext as KanbanBoardApp.ViewModels.MainViewModel;
+                    var vm = DataContext as MainViewModel;
                     if (vm == null) return;
 
-                    int oldIndex = vm.Columns.IndexOf(draggedColumn);
                     int newIndex = vm.Columns.IndexOf(targetColumn);
-
-                    if (oldIndex >= 0 && newIndex >= 0 && oldIndex != newIndex)
-                    {
-                        vm.Columns.Move(oldIndex, newIndex);
-                    }
+                    vm.MoveColumn(draggedColumn, newIndex);
                 }
             }
         }
 
-        private void RecordCardHistory(KanbanCard card, KanbanCard edited)
-        {
-            var user = Environment.UserName;
-
-            if (card.Title != edited.Title)
-                card.History.Add(new UserActivityEntry
-                {
-                    Timestamp = DateTime.Now,
-                    PropertyChanged = "Title",
-                    OldValue = card.Title,
-                    NewValue = edited.Title,
-                    ChangedBy = user
-                });
-
-            if (card.Owner != edited.Owner)
-                card.History.Add(new UserActivityEntry
-                {
-                    Timestamp = DateTime.Now,
-                    PropertyChanged = "Owner",
-                    OldValue = card.Owner,
-                    NewValue = edited.Owner,
-                    ChangedBy = user
-                });
-
-            if (card.Description != edited.Description)
-                card.History.Add(new UserActivityEntry
-                {
-                    Timestamp = DateTime.Now,
-                    PropertyChanged = "Description",
-                    OldValue = card.Description,
-                    NewValue = edited.Description,
-                    ChangedBy = user
-                });
-
-            if (card.Urgency != edited.Urgency)
-                card.History.Add(new UserActivityEntry
-                {
-                    Timestamp = DateTime.Now,
-                    PropertyChanged = "Urgency",
-                    OldValue = card.Urgency,
-                    NewValue = edited.Urgency,
-                    ChangedBy = user
-                });
-
-            if (card.Status != edited.Status)
-                card.History.Add(new UserActivityEntry
-                {
-                    Timestamp = DateTime.Now,
-                    PropertyChanged = "Status",
-                    OldValue = card.Status,
-                    NewValue = edited.Status,
-                    ChangedBy = user
-                });
-
-            if (card.DueDate != edited.DueDate)
-                card.History.Add(new UserActivityEntry
-                {
-                    Timestamp = DateTime.Now,
-                    PropertyChanged = "DueDate",
-                    OldValue = card.DueDate?.ToString() ?? "",
-                    NewValue = edited.DueDate?.ToString() ?? "",
-                    ChangedBy = user
-                });
-
-            if (card.Comment != edited.Comment)
-                card.History.Add(new UserActivityEntry
-                {
-                    Timestamp = DateTime.Now,
-                    PropertyChanged = "Description",
-                    OldValue = card.Description,
-                    NewValue = edited.Description,
-                    ChangedBy = user
-                });
-        }
 
         private void SaveBoard_Click(object sender, RoutedEventArgs e)
         {

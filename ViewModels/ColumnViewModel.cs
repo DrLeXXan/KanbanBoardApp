@@ -93,6 +93,12 @@ namespace KanbanBoardApp.ViewModels
             });
         }
 
+        public void RemoveColumn(KanbanColumn column)
+        {
+            if (Columns.Contains(column))
+                Columns.Remove(column);
+        }
+
         public void SaveBoard(string? filePath = null)
         {
             var boardData = Columns.ToList();
@@ -125,6 +131,115 @@ namespace KanbanBoardApp.ViewModels
                 foreach (var col in columns)
                     Columns.Add(col);
             }
+        }
+
+        public void MoveCard(KanbanCard card, KanbanColumn targetColumn)
+        {
+            var sourceColumn = Columns.FirstOrDefault(col => col.Cards.Contains(card));
+            if (sourceColumn == null || targetColumn == null || sourceColumn == targetColumn)
+                return;
+
+            // Remove from source, add to target
+            sourceColumn.Cards.Remove(card);
+            targetColumn.Cards.Add(card);
+
+            // Update card status
+            string oldStatus = card.Status;
+            card.Status = targetColumn.Title;
+
+            // Record history
+            card.History.Add(new UserActivityEntry
+            {
+                Timestamp = DateTime.Now,
+                PropertyChanged = "Status",
+                OldValue = oldStatus,
+                NewValue = card.Status,
+                ChangedBy = Environment.UserName
+            });
+        }
+
+        public void MoveColumn(KanbanColumn column, int newIndex)
+        {
+            int oldIndex = Columns.IndexOf(column);
+            if (oldIndex < 0 || newIndex < 0 || oldIndex == newIndex)
+                return;
+
+            Columns.Move(oldIndex, newIndex);
+        }
+
+        public void RecordCardHistory(KanbanCard card, KanbanCard edited)
+        {
+            var user = Environment.UserName;
+
+            if (card.Title != edited.Title)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Title",
+                    OldValue = card.Title,
+                    NewValue = edited.Title,
+                    ChangedBy = user
+                });
+
+            if (card.Owner != edited.Owner)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Owner",
+                    OldValue = card.Owner,
+                    NewValue = edited.Owner,
+                    ChangedBy = user
+                });
+
+            if (card.Description != edited.Description)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Description",
+                    OldValue = card.Description,
+                    NewValue = edited.Description,
+                    ChangedBy = user
+                });
+
+            if (card.Urgency != edited.Urgency)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Urgency",
+                    OldValue = card.Urgency,
+                    NewValue = edited.Urgency,
+                    ChangedBy = user
+                });
+
+            if (card.Status != edited.Status)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Status",
+                    OldValue = card.Status,
+                    NewValue = edited.Status,
+                    ChangedBy = user
+                });
+
+            if (card.DueDate != edited.DueDate)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "DueDate",
+                    OldValue = card.DueDate?.ToString() ?? "",
+                    NewValue = edited.DueDate?.ToString() ?? "",
+                    ChangedBy = user
+                });
+
+            if (card.Comment != edited.Comment)
+                card.History.Add(new UserActivityEntry
+                {
+                    Timestamp = DateTime.Now,
+                    PropertyChanged = "Description",
+                    OldValue = card.Description,
+                    NewValue = edited.Description,
+                    ChangedBy = user
+                });
         }
 
     }   
