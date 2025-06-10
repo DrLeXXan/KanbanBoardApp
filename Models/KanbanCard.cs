@@ -80,6 +80,17 @@ namespace KanbanBoardApp.Models
             return clone;
         }
 
+        public void UpdateFrom(KanbanCard other)
+        {
+            Title = other.Title;
+            Owner = other.Owner;
+            Description = other.Description;
+            Urgency = other.Urgency;
+            Status = other.Status;
+            DueDate = other.DueDate;
+            Comment = other.Comment;
+        }
+
         public ObservableCollection<UserActivityEntry> History { get; set; } = new();
 
         public event PropertyChangedEventHandler? PropertyChanged;

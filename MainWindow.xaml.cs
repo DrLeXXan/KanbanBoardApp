@@ -1,7 +1,6 @@
 ﻿using KanbanBoardApp.Models;
 using KanbanBoardApp.View;
 using KanbanBoardApp.ViewModels;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -148,14 +147,9 @@ namespace KanbanBoardApp
 
                                 currentColumn.Cards.Remove(card);
                                 newColumn.Cards.Add(card);
+
                                 // Update card properties
-                                card.Title = edited.Title;
-                                card.Owner = edited.Owner;
-                                card.Description = edited.Description;
-                                card.Urgency = edited.Urgency;
-                                card.Status = edited.Status;
-                                card.DueDate = edited.DueDate;
-                                card.Comment = edited.Comment;
+                                card.UpdateFrom(edited);
 
                                 // Sync history to the clone for dialog display
                                 cardCopy.History.Clear();
@@ -168,13 +162,7 @@ namespace KanbanBoardApp
                         vm.RecordCardHistory(card, edited);
 
                         // Update card properties if not moved
-                        card.Title = edited.Title;
-                        card.Owner = edited.Owner;
-                        card.Description = edited.Description;
-                        card.Urgency = edited.Urgency;
-                        card.Status = edited.Status;
-                        card.DueDate = edited.DueDate;
-                        card.Comment = edited.Comment;
+                        card.UpdateFrom(edited);
 
                         // Sync history to the clone for dialog display
                         cardCopy.History.Clear();
@@ -186,8 +174,6 @@ namespace KanbanBoardApp
         }
 
         private Point _dragStartPoint;
-        private KanbanCard? _draggedCard;
-        private KanbanColumn? _sourceColumn;
 
         private void Card_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -199,7 +185,6 @@ namespace KanbanBoardApp
             }
         }
 
-        // This Function is firering even if the mouse it not clicked!!! Causing issues!!!!!!
         private void Card_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -313,8 +298,15 @@ namespace KanbanBoardApp
 
             if (dialog.ShowDialog() == true)
             {
-                vm.SaveBoard(dialog.FileName);
-                MessageBox.Show("Board saved successfully.", "Save", MessageBoxButton.OK, MessageBoxImage.Information);
+                try
+                {
+                    vm.SaveBoard(dialog.FileName);
+                    MessageBox.Show("Board saved successfully.", "Save", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to save board: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -328,9 +320,20 @@ namespace KanbanBoardApp
 
             if (dialog.ShowDialog() == true)
             {
-                var json = File.ReadAllText(dialog.FileName);
-                var vm = DataContext as MainViewModel;
-                vm?.LoadBoardFromJson(json);
+                try
+                {
+                    var json = File.ReadAllText(dialog.FileName);
+                    var vm = DataContext as MainViewModel;
+                    if (vm == null)
+                        throw new InvalidOperationException("ViewModel is not available.");
+
+                    vm.LoadBoardFromJson(json);
+                    MessageBox.Show("Board loaded successfully.", "Load", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to load board:\n{ex.Message}", "Load Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

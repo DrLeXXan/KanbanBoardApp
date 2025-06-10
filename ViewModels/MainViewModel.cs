@@ -1,11 +1,5 @@
 ﻿using KanbanBoardApp.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -17,7 +11,7 @@ namespace KanbanBoardApp.ViewModels
     //public class MainViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<KanbanColumn> Columns { get; set; }
-        public ICommand AddColumnsCommand { get; }
+        public ICommand AddColumnCommand { get; }
         public ICommand DeleteColumnCommand { get; set; }
         public ICommand AddCardCommand { get; }
         public ICommand SaveBoardCommand { get; }
@@ -33,7 +27,7 @@ namespace KanbanBoardApp.ViewModels
                 new KanbanColumn { Title = "Done" }
             };
 
-            AddColumnsCommand = new RelayCommand(AddColumnHandler);
+            AddColumnCommand = new RelayCommand(AddColumnHandler);
             DeleteColumnCommand = new RelayCommand(DeleteColumnHandler);
             AddCardCommand = new RelayCommand(AddCardHandler);
             SaveBoardCommand = new RelayCommand(_ => SaveBoard());
