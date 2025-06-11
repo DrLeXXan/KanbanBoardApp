@@ -37,13 +37,13 @@ This project is a Kanban Board application built with WPF and C#. It allows user
 
 ### Built With
 
-- **.NET 9** – modern, high-performance application framework
-- **WPF (Windows Presentation Foundation)** – for rich desktop UI
-- **XAML** – declarative UI markup for WPF
-- **MVVM Pattern** – for separation of concerns and maintainable code
-- **Custom Controls** – for reusable UI components (e.g., PlaceHolderTextBox)
-- **System.Text.Json** – for fast, built-in JSON serialization
-- **ObservableCollection** – for dynamic data binding in UI
+- **.NET 9** â€“ modern, high-performance application framework
+- **WPF (Windows Presentation Foundation)** â€“ for rich desktop UI
+- **XAML** â€“ declarative UI markup for WPF
+- **MVVM Pattern** â€“ for separation of concerns and maintainable code
+- **Custom Controls** â€“ for reusable UI components (e.g., PlaceHolderTextBox)
+- **System.Text.Json** â€“ for fast, built-in JSON serialization
+- **ObservableCollection** â€“ for dynamic data binding in UI
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
