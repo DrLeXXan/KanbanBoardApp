@@ -117,7 +117,7 @@
         </Grid>
         
         <!-- Card Description -->
-        <Expander Header="Card Description" IsExpanded="True" Margin="10,5,10,5">
+        <Expander Header="Description" IsExpanded="True" Margin="10,5,10,5">
             <CC:PlaceHolderTextBox TextWrapping="Wrap" 
                                    AcceptsReturn="True" 
                                    VerticalContentAlignment="Top"
@@ -129,7 +129,7 @@
         </Expander>
 
         <!-- Card Comments/Notes  -->
-        <Expander Header="Card History" IsExpanded="True" Margin="10,5,10,5">
+        <Expander Header="Comments" IsExpanded="True" Margin="10,5,10,5">
             <CC:PlaceHolderTextBox TextWrapping="Wrap" 
                                     AcceptsReturn="True" 
                                     VerticalContentAlignment="Top"

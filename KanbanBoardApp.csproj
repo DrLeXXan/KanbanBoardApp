@@ -10,13 +10,11 @@
 
   <ItemGroup>
     <None Remove="Icons\add.ico" />
-    <None Remove="Icons\menu.ico" />
     <None Remove="Icons\trash.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Icons\add.ico" />
-    <Resource Include="Icons\menu.ico" />
     <Resource Include="Icons\trash.ico" />
   </ItemGroup>
 

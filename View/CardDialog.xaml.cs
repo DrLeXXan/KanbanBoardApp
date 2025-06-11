@@ -1,28 +1,32 @@
 ﻿using KanbanBoardApp.Models;
 using KanbanBoardApp.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Xml.XPath;
+
 
 namespace KanbanBoardApp.View
 {
+    /// <summary>
+    /// Interaction logic for the CardDialog window.
+    /// Provides UI for creating or editing a Kanban card.
+    /// </summary>
     public partial class CardDialog : Window
     {
+        /// <summary>
+        /// Gets the view model for the dialog.
+        /// </summary>
         public CardDialogViewModel ViewModel { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the user requested to delete the card.
+        /// </summary>
         public bool IsDeleteRequested { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CardDialog"/> class.
+        /// </summary>
+        /// <param name="card">The card to edit, or null to create a new card.</param>
+        /// <param name="columns">The list of available columns.</param>
+        /// <param name="defaultColumn">The default column for the card.</param>
         public CardDialog(KanbanCard? card = null, List<KanbanColumn>? columns = null, KanbanColumn? defaultColumn = null)
         {
             InitializeComponent();
@@ -36,14 +40,24 @@ namespace KanbanBoardApp.View
             
         }
 
+        /// <summary>
+        /// Gets the card being created or edited in the dialog.
+        /// </summary>
+        /// <returns>The <see cref="KanbanCard"/> instance.</returns>
         public KanbanCard GetCard() => ViewModel.Card;
 
-            private void btnClose_window(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Handles the close button click event. Closes the dialog without saving.
+        /// </summary>
+        private void btnClose_window(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
             Close(); 
         }
 
+        /// <summary>
+        /// Handles the save button click event. Validates and saves the card.
+        /// </summary>
         private void btnSave_Card(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(ViewModel.Card.Title))
@@ -68,6 +82,9 @@ namespace KanbanBoardApp.View
                 
         }
 
+        /// <summary>
+        /// Handles the delete button click event. Prompts for confirmation and marks the card for deletion.
+        /// </summary>
         private void btnDelete_Card(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show(
@@ -83,7 +100,5 @@ namespace KanbanBoardApp.View
 
             }
         }
-
-
     }
 }

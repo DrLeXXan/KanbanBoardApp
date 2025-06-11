@@ -10,8 +10,17 @@ using System.IO;
 
 namespace KanbanBoardApp
 {
+
+    /// <summary>
+    /// Interaction logic for the main Kanban board window.
+    /// Handles UI events, drag-and-drop, and dialog interactions.
+    /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainWindow"/> class.
+        /// Sets up the DataContext and command bindings.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -27,6 +36,10 @@ namespace KanbanBoardApp
             }
         }
 
+        /// <summary>
+        /// Opens the Add Card dialog for the specified column.
+        /// </summary>
+        /// <param name="defaultColumn">The column to add the card to, or null for the first column.</param>
         private void AddCard(KanbanColumn? defaultColumn = null)
         {
             var vm = DataContext as MainViewModel;
@@ -40,7 +53,9 @@ namespace KanbanBoardApp
             }
         }
 
-        // Use this for both header and column add buttons:
+        /// <summary>
+        /// Handles the Add Card button click for both header and column buttons.
+        /// </summary>
         private void btnAdd_Card(object sender, RoutedEventArgs e)
         {
             KanbanColumn? defaultColumn = null;
@@ -49,6 +64,9 @@ namespace KanbanBoardApp
             AddCard(defaultColumn);
         }
 
+        /// <summary>
+        /// Handles double-click on a column title to enable editing.
+        /// </summary>
         private void ColumnTitle_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
@@ -60,6 +78,9 @@ namespace KanbanBoardApp
             }
         }
 
+        /// <summary>
+        /// Handles Enter key press to finish editing a column title.
+        /// </summary>
         private void ColumnTitleTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -71,9 +92,12 @@ namespace KanbanBoardApp
             }
         }
 
+        /// <summary>
+        /// Handles mouse down events to end column title editing when clicking outside a TextBox.
+        /// </summary>
         private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            // If the click is inside a TextBox, do nothing (let editing continue)
+            // If the click is inside a TextBox, do nothing
             if (e.OriginalSource is DependencyObject depObj)
             {
                 var parent = depObj;
@@ -93,6 +117,10 @@ namespace KanbanBoardApp
             }
         }
 
+        /// <summary>
+        /// Prompts the user to confirm column deletion and removes the column if confirmed.
+        /// </summary>
+        /// <param name="column">The column to delete.</param>
         public void DeleteColumnWithConfirmation(KanbanColumn column)
         {
             if (column.Cards.Count > 0)
@@ -116,6 +144,9 @@ namespace KanbanBoardApp
             }
         }
 
+        /// <summary>
+        /// Handles double-click on a card to open the edit dialog.
+        /// </summary>
         private void Open_Card_In_Dialog(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2 && sender is Border border && border.DataContext is KanbanCard card)
@@ -175,6 +206,9 @@ namespace KanbanBoardApp
 
         private Point _dragStartPoint;
 
+        /// <summary>
+        /// Handles mouse down on a card to start drag or open the edit dialog on double-click.
+        /// </summary>
         private void Card_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _dragStartPoint = e.GetPosition(null);
@@ -185,6 +219,9 @@ namespace KanbanBoardApp
             }
         }
 
+        /// <summary>
+        /// Handles mouse move to initiate card drag-and-drop.
+        /// </summary>
         private void Card_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
@@ -201,6 +238,9 @@ namespace KanbanBoardApp
             }
         }
 
+        /// <summary>
+        /// Handles drag-over events for cards to show valid drop effects.
+        /// </summary>
         private void Cards_DragOver(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(typeof(KanbanBoardApp.Models.KanbanCard)))
@@ -210,6 +250,9 @@ namespace KanbanBoardApp
             e.Handled = true;
         }
 
+        /// <summary>
+        /// Handles drop events to move a card to a new column.
+        /// </summary>
         private void Cards_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(typeof(KanbanCard)))
@@ -230,7 +273,9 @@ namespace KanbanBoardApp
         private Point _columnDragStartPoint;
         private KanbanColumn? _draggedColumn;
 
-        // Column header mouse down: start drag
+        /// <summary>
+        /// Handles mouse down on a column header to start column drag-and-drop.
+        /// </summary>
         private void ColumnHeader_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             _columnDragStartPoint = e.GetPosition(null);
@@ -241,7 +286,9 @@ namespace KanbanBoardApp
             }
         }
 
-        // Column header mouse move: initiate drag if moved enough
+        /// <summary>
+        /// Handles mouse move to initiate column drag-and-drop.
+        /// </summary>
         private void ColumnHeader_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed && _draggedColumn != null)
@@ -256,7 +303,9 @@ namespace KanbanBoardApp
             }
         }
 
-        // Allow dropping on header
+        /// <summary>
+        /// Handles drag-over events for column headers to show valid drop effects.
+        /// </summary>
         private void ColumnHeader_DragOver(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(typeof(KanbanColumn)))
@@ -266,7 +315,9 @@ namespace KanbanBoardApp
             e.Handled = true;
         }
 
-        // Handle drop: reorder columns
+        /// <summary>
+        /// Handles drop events to reorder columns.
+        /// </summary>
         private void ColumnHeader_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(typeof(KanbanColumn)))
@@ -283,7 +334,9 @@ namespace KanbanBoardApp
             }
         }
 
-
+        /// <summary>
+        /// Handles the Save Board button click to save the board to a JSON file.
+        /// </summary>
         private void SaveBoard_Click(object sender, RoutedEventArgs e)
         {
             var vm = DataContext as MainViewModel;
@@ -310,6 +363,9 @@ namespace KanbanBoardApp
             }
         }
 
+        /// <summary>
+        /// Handles the Load Board button click to load the board from a JSON file.
+        /// </summary>
         private void LoadBoard_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog

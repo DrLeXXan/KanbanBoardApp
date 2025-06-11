@@ -7,15 +7,41 @@ using System.IO;
 
 namespace KanbanBoardApp.ViewModels
 {
+    /// <summary>
+    /// The main ViewModel for the Kanban board application.
+    /// Manages columns, cards, and board persistence.
+    /// </summary>
     public class MainViewModel
-    //public class MainViewModel : INotifyPropertyChanged
+
     {
+        /// <summary>
+        /// Gets or sets the collection of columns in the Kanban board.
+        /// </summary>
         public ObservableCollection<KanbanColumn> Columns { get; set; }
+
+        /// <summary>
+        /// Gets the command to add a new column.
+        /// </summary>
         public ICommand AddColumnCommand { get; }
+
+        /// <summary>
+        /// Gets or sets the command to delete a column.
+        /// </summary>
         public ICommand DeleteColumnCommand { get; set; }
+
+        /// <summary>
+        /// Gets the command to add a new card.
+        /// </summary>
         public ICommand AddCardCommand { get; }
+
+        /// <summary>
+        /// Gets the command to save the board.
+        /// </summary>
         public ICommand SaveBoardCommand { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainViewModel"/> class.
+        /// </summary>
         public MainViewModel()
         {
 
@@ -68,6 +94,11 @@ namespace KanbanBoardApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Adds a new card to the specified column, or the first column if not specified.
+        /// Also records the creation in the card's history.
+        /// </summary>
+        /// <param name="card">The card to add.</param>
         public void AddCardToColumn(KanbanCard card)
         {
             var targetColumn = Columns.FirstOrDefault(c => c.Title == card.Status);
@@ -87,12 +118,20 @@ namespace KanbanBoardApp.ViewModels
             });
         }
 
+        /// <summary>
+        /// Removes the specified column from the board.
+        /// </summary>
+        /// <param name="column">The column to remove.</param>
         public void RemoveColumn(KanbanColumn column)
         {
             if (Columns.Contains(column))
                 Columns.Remove(column);
         }
 
+        /// <summary>
+        /// Saves the current board state to a JSON file.
+        /// </summary>
+        /// <param name="filePath">The file path to save to. If null, the method does nothing.</param>
         public void SaveBoard(string? filePath = null)
         {
             var boardData = Columns.ToList();
@@ -111,6 +150,10 @@ namespace KanbanBoardApp.ViewModels
             File.WriteAllText(filePath, json);
         }
 
+        /// <summary>
+        /// Loads the board state from a JSON string.
+        /// </summary>
+        /// <param name="json">The JSON string representing the board.</param>
         public void LoadBoardFromJson(string json)
         {
             var options = new JsonSerializerOptions
@@ -127,6 +170,11 @@ namespace KanbanBoardApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Moves a card to a different column and records the status change in history.
+        /// </summary>
+        /// <param name="card">The card to move.</param>
+        /// <param name="targetColumn">The column to move the card to.</param>
         public void MoveCard(KanbanCard card, KanbanColumn targetColumn)
         {
             var sourceColumn = Columns.FirstOrDefault(col => col.Cards.Contains(card));
@@ -137,7 +185,6 @@ namespace KanbanBoardApp.ViewModels
             sourceColumn.Cards.Remove(card);
             targetColumn.Cards.Add(card);
 
-            // Update card status
             string oldStatus = card.Status;
             card.Status = targetColumn.Title;
 
@@ -152,6 +199,11 @@ namespace KanbanBoardApp.ViewModels
             });
         }
 
+        /// <summary>
+        /// Moves a column to a new index in the collection.
+        /// </summary>
+        /// <param name="column">The column to move.</param>
+        /// <param name="newIndex">The new index for the column.</param>
         public void MoveColumn(KanbanColumn column, int newIndex)
         {
             int oldIndex = Columns.IndexOf(column);
@@ -161,6 +213,12 @@ namespace KanbanBoardApp.ViewModels
             Columns.Move(oldIndex, newIndex);
         }
 
+        /// <summary>
+        /// Records changes made to a card by comparing it to an edited version.
+        /// Adds history entries for each changed property.
+        /// </summary>
+        /// <param name="card">The original card.</param>
+        /// <param name="edited">The edited card.</param>
         public void RecordCardHistory(KanbanCard card, KanbanCard edited)
         {
             var user = Environment.UserName;
