@@ -278,8 +278,8 @@ namespace KanbanBoardApp.ViewModels
                 {
                     Timestamp = DateTime.Now,
                     PropertyChanged = "DueDate",
-                    OldValue = card.DueDate?.ToString() ?? "",
-                    NewValue = edited.DueDate?.ToString() ?? "",
+                    OldValue = card.DueDate?.ToString("yyyy-MM-dd") ?? "",
+                    NewValue = edited.DueDate?.ToString("yyyy-MM-dd") ?? "",
                     ChangedBy = user
                 });
 
@@ -287,9 +287,9 @@ namespace KanbanBoardApp.ViewModels
                 card.History.Add(new UserActivityEntry
                 {
                     Timestamp = DateTime.Now,
-                    PropertyChanged = "Description",
-                    OldValue = card.Description,
-                    NewValue = edited.Description,
+                    PropertyChanged = "Comment",
+                    OldValue = card.Comment,
+                    NewValue = edited.Comment,
                     ChangedBy = user
                 });
         }
