@@ -34,8 +34,9 @@ This project is a Kanban Board application built with WPF and C#. It allows user
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+---
 
-### Built With
+## Built With
 
 - **.NET 9** – modern, high-performance application framework
 - **WPF (Windows Presentation Foundation)** – for rich desktop UI
@@ -49,7 +50,7 @@ This project is a Kanban Board application built with WPF and C#. It allows user
 
 
 <!-- Features Overview -->
-### Features
+## Features
 
 - Create, edit, and delete Kanban cards with title, owner, description, urgency, status, due date, and comments
 - Add, rename, move, and delete columns dynamically
@@ -89,6 +90,35 @@ Below is an example of how you can instruct your audience on installing and sett
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
+<!-- EXTERNAL LICENSES-->
+## Third-party software and licenses
+This application uses the following external libraries. Please note the respective license terms.
+
+### .NET 9 und WPF
+- **Source:** https://dotnet.microsoft.com/
+- **License:** MIT License  
+  https://github.com/dotnet/runtime/blob/main/LICENSE.TXT
+
+### xUnit
+- **Package:** xunit (2.9.2), xunit.runner.visualstudio (2.8.2)
+- **Source:** https://xunit.net/
+- **License:** Apache License 2.0  
+  https://github.com/xunit/xunit/blob/main/license.txt
+
+### Microsoft.NET.Test.Sdk
+- **Paket:** Microsoft.NET.Test.Sdk (17.12.0)
+- **Source:** https://github.com/microsoft/vstest
+- **License:** MIT License  
+  https://github.com/microsoft/vstest/blob/main/LICENSE
+
+### coverlet.collector
+- **Package:** coverlet.collector (6.0.2)
+- **Source:** https://github.com/coverlet-coverage/coverlet
+- **License:** MIT License  
+  https://github.com/coverlet-coverage/coverlet/blob/master/LICENSE
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- LICENSE -->
 ## License
