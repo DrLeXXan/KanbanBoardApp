@@ -1,6 +1,8 @@
 ﻿using KanbanBoardApp.Models;
 using KanbanBoardApp.ViewModels;
 using System.Windows;
+using System.Diagnostics; // At the top of the file
+using System.IO;
 
 
 namespace KanbanBoardApp.View

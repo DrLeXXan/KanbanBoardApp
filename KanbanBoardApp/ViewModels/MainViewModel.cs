@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.IO;
+using System.Diagnostics;
 
 namespace KanbanBoardApp.ViewModels
 {
@@ -84,8 +85,25 @@ namespace KanbanBoardApp.ViewModels
         {
             if (parameter is KanbanColumn column)
             {
+                var stopwatch = Stopwatch.StartNew();
+
                 var dialog = new KanbanBoardApp.View.CardDialog(null, Columns.ToList(), column);
-                if (dialog.ShowDialog() == true)
+                bool? result = dialog.ShowDialog();
+
+                stopwatch.Stop();
+                long elapsedMs = stopwatch.ElapsedMilliseconds;
+
+                // Define your log file path (e.g., in the user's Documents folder)
+                string logPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    "KanbanBoardApp_CardDialogLog.txt");
+
+                string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - CardDialog open duration: {elapsedMs} ms{Environment.NewLine}";
+
+                // Append the log entry to the file
+                File.AppendAllText(logPath, logEntry);
+
+                if (result == true)
                 {
                     var card = dialog.GetCard();
                     if (card != null)
@@ -165,8 +183,20 @@ namespace KanbanBoardApp.ViewModels
             if (columns != null)
             {
                 Columns.Clear();
+                int maxId = 0;
                 foreach (var col in columns)
+                {
+                    col.EnsureCardCountBinding();
                     Columns.Add(col);
+                    foreach (var card in col.Cards)
+                    {
+                        if (card.Id > maxId)
+                            maxId = card.Id;
+                    }
+                }
+                // Set the next ID to one higher than the highest found
+                if (maxId >= 1)
+                    typeof(KanbanCard).GetField("_nextId", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!.SetValue(null, maxId + 1);
             }
         }
 

@@ -6,16 +6,16 @@ namespace KanbanBoardApp.Tests
 {
     /// <summary>
     /// Unit tests for the UserActivityEntry model.
-    /// Covers property assignment, mutability, edge cases, and value handling.
+    /// Tests cover property assignment, mutability, edge cases, and value handling.
     /// </summary>
     public class UserActivityEntryTests
     {
-        /// <summary>
-        /// Verifies that all properties of UserActivityEntry can be set and retrieved correctly.
-        /// </summary>
-        [Fact]
+        [Fact(DisplayName = "UT01: All properties can be set and retrieved correctly")]
         public void UserActivityEntry_Properties_AreSetAndGetCorrectly()
         {
+            // Preconditions: None
+
+            // Input/Action
             var now = DateTime.Now;
             var entry = new UserActivityEntry
             {
@@ -26,19 +26,22 @@ namespace KanbanBoardApp.Tests
                 ChangedBy = "Tester"
             };
 
+            // Expected Result
             Assert.Equal(now, entry.Timestamp);
             Assert.Equal("Title", entry.PropertyChanged);
             Assert.Equal("Old", entry.OldValue);
             Assert.Equal("New", entry.NewValue);
             Assert.Equal("Tester", entry.ChangedBy);
+
+            // Actual result is verified by assertions above
         }
 
-        /// <summary>
-        /// Ensures that empty strings and very long strings are accepted for string properties.
-        /// </summary>
-        [Fact]
+        [Fact(DisplayName = "UT02: Allows empty and long strings for string properties")]
         public void UserActivityEntry_Allows_Empty_And_Long_Strings()
         {
+            // Preconditions: None
+
+            // Input/Action
             var longString = new string('x', 10000);
             var entry = new UserActivityEntry
             {
@@ -49,19 +52,22 @@ namespace KanbanBoardApp.Tests
                 ChangedBy = ""
             };
 
+            // Expected Result
             Assert.Equal(DateTime.MinValue, entry.Timestamp);
             Assert.Equal("", entry.PropertyChanged);
             Assert.Equal(longString, entry.OldValue);
             Assert.Equal("!@#$%^&*()_+", entry.NewValue);
             Assert.Equal("", entry.ChangedBy);
+
+            // Actual result is verified by assertions above
         }
 
-        /// <summary>
-        /// Verifies that properties can be changed after construction and the changes are reflected.
-        /// </summary>
-        [Fact]
+        [Fact(DisplayName = "UT03: Properties can be changed after construction")]
         public void UserActivityEntry_Properties_CanBeChangedAfterConstruction()
         {
+            // Preconditions: Entry is constructed with initial values
+
+            // Input/Action
             var entry = new UserActivityEntry
             {
                 Timestamp = DateTime.Now,
@@ -76,18 +82,21 @@ namespace KanbanBoardApp.Tests
             entry.NewValue = "New";
             entry.ChangedBy = "AnotherUser";
 
+            // Expected Result
             Assert.Equal("Comment", entry.PropertyChanged);
             Assert.Equal("Old", entry.OldValue);
             Assert.Equal("New", entry.NewValue);
             Assert.Equal("AnotherUser", entry.ChangedBy);
+
+            // Actual result is verified by assertions above
         }
 
-        /// <summary>
-        /// Ensures that DateTime edge values (e.g., DateTime.MaxValue) are accepted for the Timestamp property.
-        /// </summary>
-        [Fact]
+        [Fact(DisplayName = "UT04: Accepts DateTime edge values for Timestamp")]
         public void UserActivityEntry_Allows_DateTime_EdgeCases()
         {
+            // Preconditions: None
+
+            // Input/Action
             var entry = new UserActivityEntry
             {
                 Timestamp = DateTime.MaxValue,
@@ -97,7 +106,10 @@ namespace KanbanBoardApp.Tests
                 ChangedBy = "User"
             };
 
+            // Expected Result
             Assert.Equal(DateTime.MaxValue, entry.Timestamp);
+
+            // Actual result is verified by assertion above
         }
     }
 }

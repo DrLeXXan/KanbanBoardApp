@@ -63,6 +63,16 @@ namespace KanbanBoardApp.Models
         }
 
         /// <summary>
+        /// Ensures that the CardCount property is updated and notifies the UI
+        /// when the Cards collection changes eg after loading new board.
+        /// </summary>
+        public void EnsureCardCountBinding()
+        {
+            Cards.CollectionChanged += (s, e) => OnPropertyChanged(nameof(CardCount));
+        }
+
+
+        /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;

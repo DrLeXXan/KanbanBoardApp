@@ -11,12 +11,12 @@ namespace KanbanBoardApp.Tests
     /// </summary>
     public class KanbanCardTests
     {
-        /// <summary>
-        /// Verifies that all properties of KanbanCard can be set and retrieved correctly.
-        /// </summary>
-        [Fact]
+        [Fact(DisplayName = "UT17: All properties can be set and retrieved correctly")]
         public void Properties_AreSetAndGetCorrectly()
         {
+            // Preconditions: None
+
+            // Input/Action
             var now = DateTime.Today;
             var card = new KanbanCard
             {
@@ -30,6 +30,7 @@ namespace KanbanBoardApp.Tests
                 Comment = "Some comment"
             };
 
+            // Expected Result
             Assert.Equal(42, card.Id);
             Assert.Equal("Test Card", card.Title);
             Assert.Equal("Tester", card.Owner);
@@ -38,14 +39,16 @@ namespace KanbanBoardApp.Tests
             Assert.Equal("To Do", card.Status);
             Assert.Equal(now, card.DueDate);
             Assert.Equal("Some comment", card.Comment);
+
+            // Actual result is verified by assertions above
         }
 
-        /// <summary>
-        /// Ensures that Clone creates a deep copy of the KanbanCard, including its history.
-        /// </summary>
-        [Fact]
+        [Fact(DisplayName = "UT18: Clone creates a deep copy including history")]
         public void Clone_CreatesDeepCopy()
         {
+            // Preconditions: KanbanCard with populated History
+
+            // Input/Action
             var card = new KanbanCard
             {
                 Id = 1,
@@ -71,6 +74,7 @@ namespace KanbanBoardApp.Tests
 
             var clone = card.Clone();
 
+            // Expected Result
             Assert.NotSame(card, clone);
             Assert.Equal(card.Id, clone.Id);
             Assert.Equal(card.Title, clone.Title);
@@ -83,14 +87,16 @@ namespace KanbanBoardApp.Tests
             Assert.NotSame(card.History, clone.History);
             Assert.Equal(card.History.Count, clone.History.Count);
             Assert.Equal(card.History[0].PropertyChanged, clone.History[0].PropertyChanged);
+
+            // Actual result is verified by assertions above
         }
 
-        /// <summary>
-        /// Verifies that UpdateFrom copies all properties from another KanbanCard instance.
-        /// </summary>
-        [Fact]
+        [Fact(DisplayName = "UT19: UpdateFrom copies all properties from another KanbanCard")]
         public void UpdateFrom_UpdatesAllProperties()
         {
+            // Preconditions: Two KanbanCard instances with different property values
+
+            // Input/Action
             var card = new KanbanCard
             {
                 Title = "Old",
@@ -114,6 +120,7 @@ namespace KanbanBoardApp.Tests
 
             card.UpdateFrom(other);
 
+            // Expected Result
             Assert.Equal("New", card.Title);
             Assert.Equal("B", card.Owner);
             Assert.Equal("D", card.Description);
@@ -121,38 +128,48 @@ namespace KanbanBoardApp.Tests
             Assert.Equal("Done", card.Status);
             Assert.Equal(DateTime.Today.AddDays(1), card.DueDate);
             Assert.Equal("E", card.Comment);
+
+            // Actual result is verified by assertions above
         }
 
-        /// <summary>
-        /// Checks that PeekNextId returns the current next ID without incrementing it.
-        /// </summary>
-        [Fact]
+        [Fact(DisplayName = "UT20: PeekNextId returns the current next ID without incrementing")]
         public void PeekNextId_ReturnsCurrentNextId()
         {
+            // Preconditions: None
+
+            // Input/Action
             int nextId = KanbanCard.PeekNextId();
             int nextIdAgain = KanbanCard.PeekNextId();
+
+            // Expected Result
             Assert.Equal(nextId, nextIdAgain);
+
+            // Actual result is verified by assertion above
         }
 
-        /// <summary>
-        /// Checks that GetNextId returns and increments the next available ID.
-        /// </summary>
-        [Fact]
+        [Fact(DisplayName = "UT21: GetNextId returns and increments the next available ID")]
         public void GetNextId_IncrementsId()
         {
+            // Preconditions: None
+
+            // Input/Action
             int before = KanbanCard.PeekNextId();
             int got = KanbanCard.GetNextId();
             int after = KanbanCard.PeekNextId();
+
+            // Expected Result
             Assert.Equal(before, got);
             Assert.Equal(before + 1, after);
+
+            // Actual result is verified by assertions above
         }
 
-        /// <summary>
-        /// Verifies that history entries can be added and enumerated in the History collection.
-        /// </summary>
-        [Fact]
+        [Fact(DisplayName = "UT22: History entries can be added and enumerated")]
         public void History_CanBeAddedAndEnumerated()
         {
+            // Preconditions: New KanbanCard instance
+
+            // Input/Action
             var card = new KanbanCard();
             var entry = new UserActivityEntry
             {
@@ -164,8 +181,11 @@ namespace KanbanBoardApp.Tests
             };
             card.History.Add(entry);
 
+            // Expected Result
             Assert.Single(card.History);
             Assert.Equal("Title", card.History[0].PropertyChanged);
+
+            // Actual result is verified by assertions above
         }
     }
 }

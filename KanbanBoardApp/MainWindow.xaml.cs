@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.IO;
+using System.Diagnostics;
 
 
 namespace KanbanBoardApp
@@ -21,6 +22,8 @@ namespace KanbanBoardApp
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// Sets up the DataContext and command bindings.
         /// </summary>
+        /// 
+        private Stopwatch? _cardDragStopwatch;
         public MainWindow()
         {
             InitializeComponent();
@@ -213,6 +216,12 @@ namespace KanbanBoardApp
         {
             _dragStartPoint = e.GetPosition(null);
 
+            // Start timing when drag is initiated
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                _cardDragStopwatch = Stopwatch.StartNew();
+            }
+
             if (e.ClickCount == 2)
             {
                 Open_Card_In_Dialog(sender, e);
@@ -255,6 +264,22 @@ namespace KanbanBoardApp
         /// </summary>
         private void Cards_Drop(object sender, DragEventArgs e)
         {
+            // Stop timing and log when drop occurs
+            if (_cardDragStopwatch != null)
+            {
+                _cardDragStopwatch.Stop();
+                long elapsedMs = _cardDragStopwatch.ElapsedMilliseconds;
+
+                string logPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    "KanbanBoardApp_CardMoveLog2.txt");
+
+                string logEntry = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - Card drag-and-drop duration: {elapsedMs} ms{Environment.NewLine}";
+                File.AppendAllText(logPath, logEntry);
+
+                _cardDragStopwatch = null;
+            }
+
             if (e.Data.GetDataPresent(typeof(KanbanCard)))
             {
                 var card = e.Data.GetData(typeof(KanbanCard)) as KanbanCard;
